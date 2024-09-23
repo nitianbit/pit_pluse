@@ -7,8 +7,18 @@ export const COLORS = {
     GREEN: '#00FF00',
     BLUE: '#0000FF',
     GOLDEN: '#FFD700',
-    BOTTOM_ACTIVE_COLOR: '#73FBFD',
-    BOTTOM_UNACTIVE_COLOR: '#000'
+    BOTTOM_ACTIVE_COLOR: '#0d6efd',
+    BOTTOM_UNACTIVE_COLOR: '#000',
+
+    PRIMARY:'#2A2A2A',
+    SECONDARY:'#DC143C',
+    ACCENT:'#C0C0C0',
+    LIGHT:'#F5F5F5',
+    DARK:'#000',
+    SUB_BACKGROUND:'#1C1C1E',
+    SEPARATOR_DARK:'#38383A',
+    SEPARATOR_LIGHT:'#C7C7CC',
+    SUB_TEXT:'#8E8E93',
 }
 
 export const DIMENSIONS = {
@@ -22,3 +32,20 @@ export const truncateText = (text, maxLength) => {
     }
     return text;
   };
+
+
+export const lightTheme = {
+  background: COLORS.LIGHT,
+  card: COLORS.WHITE,
+  text: COLORS.DARK,
+  subText: COLORS.SUB_TEXT,
+  separator: COLORS.SEPARATOR_LIGHT,
+};
+
+export const darkTheme = {
+  background: COLORS.DARK,
+  card: COLORS.SUB_BACKGROUND,
+  text: COLORS.LIGHT,
+  subText: COLORS.SUB_TEXT, //
+  separator: COLORS.SEPARATOR_DARK,
+};

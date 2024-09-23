@@ -17,10 +17,11 @@ export default Layout
 
 const styles = StyleSheet.create({
     outerView: {
-        backgroundColor: '#fff',
+        // backgroundColor: '#fff',
         flex: 1,
         alignSelf: 'center',
-        width: '100%'
+        width: '100%',
+        paddingHorizontal:20
     },
     mainView: {
         // backgroundColor: 'red',
