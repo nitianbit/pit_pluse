@@ -40,12 +40,12 @@ const data = [
         Icon: ScheduleSvg,
         component: Schedule
     },
-    {
-        name: NavName.RESET,
-        title: 'Reset', 
-        Icon: ResetSvg,
-        component: Reset
-    }
+    // {
+    //     name: NavName.RESET,
+    //     title: 'Reset', 
+    //     Icon: ResetSvg,
+    //     component: Reset
+    // }
 ]       
 
 const BottomNavigation = () => {

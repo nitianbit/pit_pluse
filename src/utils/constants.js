@@ -49,3 +49,8 @@ export const darkTheme = {
   subText: COLORS.SUB_TEXT, //
   separator: COLORS.SEPARATOR_DARK,
 };
+
+export const MODAL_TYPE={
+  RESET:'RESET',
+  SERVICE_STOP_TIME:'SERVICE_STOP_TIME',
+}

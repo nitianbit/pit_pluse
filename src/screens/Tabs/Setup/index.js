@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Button, TextInput } from 'react-native';
 import useThemeColor from '../../../hooks/useThemeColor';
-import { Card, Layout, ThemedInput, ThemeText } from '../../../components';
+import { Card, CenteredModal, Layout, ThemedInput, ThemeText } from '../../../components';
 import { Slider } from '@miblanchard/react-native-slider';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
-import { COLORS } from '../../../utils/constants';
+import { COLORS, MODAL_TYPE } from '../../../utils/constants';
 import { convertMinutesToHoursAndMinutes } from '../../../utils/helper';
 import CounterButton from '../../../components/CounterButton';
+import { ResetSvg } from '../../../assets/svgs';
 
 
 
@@ -21,6 +22,10 @@ const Setup = () => {
   const theme = useThemeColor();
 
   const [open, setOpen] = useState(false);
+  const [modal, setModal] = useState({
+    type: null,
+    visible: null
+  });
   const [data, setData] = useState({
     date: new Date(),
     startTime: moment().unix(),
@@ -64,6 +69,9 @@ const Setup = () => {
     setData(prev => ({ ...prev, drivers: prev.drivers.map((driver, i) => i === index ? { ...driver, [key]: value } : driver) }))
   }
 
+  const openModal=(type,visible)=>setModal({type,visible});
+  const closeModal=()=>setModal({type:null,visible:false});
+
 
 
   return (
@@ -71,6 +79,11 @@ const Setup = () => {
       <ScrollView>
         <ThemeText style={styles.title} text="Setup" />
         <ThemeText style={styles.subTitle} text="RACE CONFIGURATION" />
+
+        <TouchableOpacity style={styles.resetBtn} onPress={() => openModal(MODAL_TYPE.RESET, true)}>
+          <ResetSvg fill={theme.text} />
+        </TouchableOpacity>
+
         <Card >
 
           <CardItem theme={theme}>
@@ -199,6 +212,20 @@ const Setup = () => {
           setOpen(false)
         }}
       />
+      
+      <CenteredModal visible={modal.type == MODAL_TYPE.RESET} onClose={closeModal}>
+        <ThemeText style={{ fontSize: 18 }}>Are you sure you want to reset ?</ThemeText>
+        <View style={styles.btns}>
+          <TouchableOpacity style={[styles.closeButton,styles.outline]} onPress={closeModal}>
+            <Text style={[styles.closeButtonText,{color:COLORS.PRIMARY}]}>Cancel</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
+            <Text style={styles.closeButtonText}>Yes</Text>
+          </TouchableOpacity>
+        </View>
+      </CenteredModal>
+
+
     </Layout>
   );
 };
@@ -292,7 +319,37 @@ const styles = StyleSheet.create({
   input: {
     flex:1,
     fontSize: 18,
+  },
+  resetBtn:{
+    position:'absolute',
+    top:0,
+    right:0,
+    padding:10,
+    zIndex:999
+  },
+  closeButton: {
+    marginTop: 15,
+    padding: 10,
+    backgroundColor: '#2196F3',
+    borderRadius: 5,
+    width:'45%'
+  },
+  closeButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign:'center'
+  },
+  btns:{
+    flexDirection:'row',
+    justifyContent:'space-around',
+    width:'100%'
+  },
+  outline:{
+    borderWidth:1,
+    borderColor:'#2196F3',
+    backgroundColor:'#FFF'
   }
+
 });
 
 export default Setup;
