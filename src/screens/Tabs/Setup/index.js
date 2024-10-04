@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Button } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Button, TextInput } from 'react-native';
 import useThemeColor from '../../../hooks/useThemeColor';
-import { Card, Layout, ThemeText } from '../../../components';
+import { Card, Layout, ThemedInput, ThemeText } from '../../../components';
 import { Slider } from '@miblanchard/react-native-slider';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
@@ -35,7 +35,7 @@ const Setup = () => {
   const updateDrivers = (add = true) => {
     if(!data.drivers.length && !add) return
     //TODO do calulation here
-    //save time in hh:mm format
+    //save time in hh:mm format or sime time format and will show in hh:mm format
     if (add) {
       setData(prev => ({ ...prev, drivers: [...prev.drivers, { name: '', time: null }] }))
     } else {
@@ -55,6 +55,13 @@ const Setup = () => {
   //TODO add debounce here
   const updateData = (key, value) => {
     setData(prev => ({ ...prev, [key]: value }))
+  }
+
+  const updateStopsData = (index, key, value) => {
+    setData(prev => ({ ...prev, stops: prev.stops.map((stop, i) => i === index ? { ...stop, [key]: value } : stop) }))
+  }
+  const updateDriversData = (index, key, value) => {
+    setData(prev => ({ ...prev, drivers: prev.drivers.map((driver, i) => i === index ? { ...driver, [key]: value } : driver) }))
   }
 
 
@@ -128,8 +135,8 @@ const Setup = () => {
           {data?.drivers.length ?<CardItem theme={theme}>
             <View style={styles.driverRow}>
               {data?.drivers?.map((item, index) => (
-                <View style={[styles.labelContainer,styles.items]}>
-                  <ThemeText key={index} style={styles.label} text={item?.name} />
+                <View style={[styles.labelContainer,styles.items]} key={index}>
+                  <ThemedInput style={styles.input} value={item?.name} onChangeText={(text) => updateDriversData(index, 'name', text)} />
                   <ThemeText key={index} style={styles.label} text={item?.time} />
                 </View>
               ))}
@@ -152,8 +159,9 @@ const Setup = () => {
           {data?.stops.length ? <CardItem theme={theme}>
             <View style={styles.driverRow}>
               {data?.stops?.map((item, index) => (
-                <View style={styles.labelContainer}>
-                  <ThemeText key={index} style={styles.label} text={item?.name} />
+                <View style={[styles.labelContainer,styles.items]} key={index}>
+                  {/* <ThemeText key={index} style={styles.label} text={item?.name} /> */}
+                  <ThemedInput style={styles.input} value={item?.name} onChangeText={(text) => updateStopsData(index, 'name', text)} />
                   <ThemeText key={index} style={styles.label} text={item?.time} />
                 </View>
               ))}
@@ -280,6 +288,10 @@ const styles = StyleSheet.create({
   },
   items:{
     paddingVertical:10,
+  },
+  input: {
+    flex:1,
+    fontSize: 18,
   }
 });
 
