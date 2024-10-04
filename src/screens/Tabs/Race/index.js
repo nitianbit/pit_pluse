@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 import { Layout, ThemeText } from '../../../components';
+import { FlagDotted, FuelIcon } from '../../../assets/svgs';
 
 const raceData = [
   { id: '1', name: 'Rodrigo', time: '00:00:00' },
@@ -13,7 +14,7 @@ const raceData = [
 const RaceApp = () => {
   const [raceTime, setRaceTime] = useState('24:00:00');
   const [fuelTime, setFuelTime] = useState('01:31:00');
-  const [raceProgress, setRaceProgress] = useState(50);
+  const [raceProgress, setRaceProgress] = useState(100);
   const [fuelProgress, setFuelProgress] = useState(60);
 
   const startRace = () => {
@@ -29,8 +30,8 @@ const RaceApp = () => {
         <View style={styles.timerBox}>
           <View style={[styles.fill, { width: `${raceProgress}%`, backgroundColor: '#4A90E2' }]} />
           <View style={styles.contentContainer}>
-            <Text style={styles.icon}>🏁</Text>
-            <ThemeText style={styles.timerText}>{raceTime}</ThemeText>
+            <FlagDotted/>
+            <Text style={styles.timerText}>{raceTime}</Text>
           </View>
         </View>
 
@@ -38,8 +39,10 @@ const RaceApp = () => {
         {/* Fuel Timer */}
         <View style={styles.timerBox}>
         <View style={[styles.fill, { width: `${fuelProgress}%`, backgroundColor: '#FF5A5F' }]} />
-          <Text style={styles.icon}>⛽</Text>
+        <View style={styles.contentContainer}>
+          <FuelIcon/>
           <Text style={styles.timerText}>{fuelTime}</Text>
+          </View>
         </View>
       </View>
 
@@ -78,12 +81,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   timerBox: {
-    flex: 1,
-    marginHorizontal: 10,
-    padding: 20,
+    padding: 15,
     borderRadius: 10,
     justifyContent: 'center',
-    alignItems: 'center',
     overflow: 'hidden', // Ensure the fill doesn't overflow outside the box
     backgroundColor: '#333', // Background for the timer box,
     marginBottom:20
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
   },
   timerText: {
     fontSize: 24,
-    // color: '#FFF',
+    color: '#FFF',
     fontWeight: 'bold',
   },
   icon: {

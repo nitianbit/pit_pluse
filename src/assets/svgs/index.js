@@ -1,4 +1,6 @@
+import FlagDotted from "./FlagDottedSvg";
 import FlagSvg from "./FlagSvg";
+import FuelIcon from "./Fuel";
 import ResetSvg from "./ResetSvg";
 import ScheduleSvg from "./ScheduleSvg";
 import SetupSvg from "./SetupSvg";
@@ -9,5 +11,7 @@ export {
     ResetSvg,
     ScheduleSvg,
     SetupSvg,
-    TimerSvg
+    TimerSvg,
+    FlagDotted,
+    FuelIcon
 }
