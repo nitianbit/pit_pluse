@@ -3,7 +3,7 @@ import { View, Text, FlatList, ScrollView, StyleSheet } from 'react-native';
 import { Layout } from '../../../components';
 
 const raceData = [
-  { id: '1', name: 'Rodrigo', startTime: '13:00', endTime: '14:20', duration: '01:20', timeLeft: '22:40' },
+  { id: '1', name: 'Rodrigo', startTime: '13:00', endTime: '14:20', duration: '01:20', timeLeft: '22:40' },//here all time related fields will be in seconds and then will convert it into hh:mm
   { id: '2', name: 'Shubham', startTime: '14:20', endTime: '15:40', duration: '01:20', timeLeft: '21:20' },
   { id: '3', name: 'Tony', startTime: '15:40', endTime: '17:00', duration: '01:20', timeLeft: '20:00' },
   { id: '4', name: 'Valentin', startTime: '17:00', endTime: '18:20', duration: '01:20', timeLeft: '18:40' },

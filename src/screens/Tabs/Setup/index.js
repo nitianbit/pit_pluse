@@ -9,6 +9,7 @@ import { COLORS, MODAL_TYPE } from '../../../utils/constants';
 import { convertMinutesToHoursAndMinutes } from '../../../utils/helper';
 import CounterButton from '../../../components/CounterButton';
 import { ResetSvg } from '../../../assets/svgs';
+import { useAppContext } from '../../../services/AppContext';
 
 
 
@@ -20,54 +21,13 @@ const CardItem = ({ theme, children }) => (
 
 const Setup = () => {
   const theme = useThemeColor();
+  const {updateData, updateDrivers, updateStops, updateDriversData, updateStopsData, data}=useAppContext();
 
   const [open, setOpen] = useState(false);
   const [modal, setModal] = useState({
     type: null,
     visible: null
-  });
-  const [data, setData] = useState({
-    date: new Date(),
-    startTime: moment().unix(),
-    duration: 0,
-    fuelDuration: 0,
-    drivers:[],//{name:'',time:null}
-    stops:[],//{name:'',time:null}
-    // numberOfDrivers: 0,// no use 
-    // numberOfServiceStops: 0, //no use
-  })
-
-  const updateDrivers = (add = true) => {
-    if(!data.drivers.length && !add) return
-    //TODO do calulation here
-    //save time in hh:mm format or sime time format and will show in hh:mm format
-    if (add) {
-      setData(prev => ({ ...prev, drivers: [...prev.drivers, { name: '', time: null }] }))
-    } else {
-      setData(prev => ({ ...prev, drivers: prev.drivers.slice(0, -1) }))
-    }
-  }
-  const updateStops = (add = true) => {
-    if(!data.stops.length && !add) return
-    //TODO do calulation here
-    if (add) {
-      setData(prev => ({ ...prev, stops: [...prev.stops, { name: '', time: null }] }))
-    } else {
-      setData(prev => ({ ...prev, stops: prev.stops.slice(0, -1) }))
-    }
-  }
-
-  //TODO add debounce here
-  const updateData = (key, value) => {
-    setData(prev => ({ ...prev, [key]: value }))
-  }
-
-  const updateStopsData = (index, key, value) => {
-    setData(prev => ({ ...prev, stops: prev.stops.map((stop, i) => i === index ? { ...stop, [key]: value } : stop) }))
-  }
-  const updateDriversData = (index, key, value) => {
-    setData(prev => ({ ...prev, drivers: prev.drivers.map((driver, i) => i === index ? { ...driver, [key]: value } : driver) }))
-  }
+  });  
 
   const openModal=(type,visible)=>setModal({type,visible});
   const closeModal=()=>setModal({type:null,visible:false});
