@@ -26,9 +26,31 @@ const Setup = () => {
     startTime: moment().unix(),
     duration: 0,
     fuelDuration: 0,
-    numberOfDrivers: 0,
-    numberOfServiceStops: 0,
+    drivers:[],//{name:'',time:null}
+    stops:[],//{name:'',time:null}
+    // numberOfDrivers: 0,// no use 
+    // numberOfServiceStops: 0, //no use
   })
+
+  const updateDrivers = (add = true) => {
+    if(!data.drivers.length && !add) return
+    //TODO do calulation here
+    //save time in hh:mm format
+    if (add) {
+      setData(prev => ({ ...prev, drivers: [...prev.drivers, { name: '', time: null }] }))
+    } else {
+      setData(prev => ({ ...prev, drivers: prev.drivers.slice(0, -1) }))
+    }
+  }
+  const updateStops = (add = true) => {
+    if(!data.stops.length && !add) return
+    //TODO do calulation here
+    if (add) {
+      setData(prev => ({ ...prev, stops: [...prev.stops, { name: '', time: null }] }))
+    } else {
+      setData(prev => ({ ...prev, stops: prev.stops.slice(0, -1) }))
+    }
+  }
 
   //TODO add debounce here
   const updateData = (key, value) => {
@@ -93,22 +115,50 @@ const Setup = () => {
           <CardItem theme={theme}>
             <View style={styles.labelContainer}>
               <CounterButton
-                value={`Number of Drivers: ${data?.numberOfDrivers}`}
-                onDecrement={() => updateData('numberOfDrivers', Math.max(0, data.numberOfDrivers - 1))}
-                onIncrement={() => updateData('numberOfDrivers', data.numberOfDrivers + 1)}
+                // value={`Number of Drivers: ${data?.numberOfDrivers}`}
+                // onDecrement={() => updateData('numberOfDrivers', Math.max(0, data.numberOfDrivers - 1))}
+                // onIncrement={() => updateData('numberOfDrivers', data.numberOfDrivers + 1)}
+                value={`Number of Drivers: ${data?.drivers?.length}`}
+                onDecrement={() => updateDrivers(false)}
+                onIncrement={() => updateDrivers()}
               />
             </View>
           </CardItem>
 
+          {data?.drivers.length ?<CardItem theme={theme}>
+            <View style={styles.driverRow}>
+              {data?.drivers?.map((item, index) => (
+                <View style={[styles.labelContainer,styles.items]}>
+                  <ThemeText key={index} style={styles.label} text={item?.name} />
+                  <ThemeText key={index} style={styles.label} text={item?.time} />
+                </View>
+              ))}
+            </View>
+          </CardItem>:null}
+
           <CardItem theme={theme}>
             <View style={styles.labelContainer}>
               <CounterButton
-                value={`Number of Service Stops: ${data?.numberOfServiceStops}`}
-                onDecrement={() => updateData('numberOfServiceStops', Math.max(0, data.numberOfServiceStops - 1))}
-                onIncrement={() => updateData('numberOfServiceStops', data.numberOfServiceStops + 1)}
+                // value={`Number of Service Stops: ${data?.numberOfServiceStops}`}
+                // onDecrement={() => updateData('numberOfServiceStops', Math.max(0, data.numberOfServiceStops - 1))}
+                // onIncrement={() => updateData('numberOfServiceStops', data.numberOfServiceStops + 1)}
+                value={`Number of Service Stops: ${data?.stops?.length}`}
+                onDecrement={() => updateStops(false)}
+                onIncrement={() => updateStops()}
               />
             </View>
           </CardItem>
+
+          {data?.stops.length ? <CardItem theme={theme}>
+            <View style={styles.driverRow}>
+              {data?.stops?.map((item, index) => (
+                <View style={styles.labelContainer}>
+                  <ThemeText key={index} style={styles.label} text={item?.name} />
+                  <ThemeText key={index} style={styles.label} text={item?.time} />
+                </View>
+              ))}
+            </View>
+          </CardItem> : null}
 
         </Card>
 
@@ -224,6 +274,12 @@ const styles = StyleSheet.create({
   stintText: {
     fontSize: 18,
     fontWeight: '500',
+  },
+  driverRow: {
+    flex: 1
+  },
+  items:{
+    paddingVertical:10,
   }
 });
 
