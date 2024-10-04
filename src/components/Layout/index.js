@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignSelf: 'center',
         width: '100%',
-        paddingHorizontal:20
+        paddingHorizontal:10
     },
     mainView: {
         // backgroundColor: 'red',

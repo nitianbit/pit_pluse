@@ -25,13 +25,13 @@ const data = [
     {
         name: NavName.RACE,
         title: 'Race',
-        Icon: TimerSvg,
+        Icon: FlagSvg,
         component: Race
     },
     {
         name: NavName.STINT,
         title: 'Stint',
-        Icon: FlagSvg,
+        Icon: TimerSvg,
         component: Stint
     },
     {
