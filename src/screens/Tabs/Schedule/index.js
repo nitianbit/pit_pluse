@@ -3,6 +3,8 @@ import { View, Text, FlatList, ScrollView, StyleSheet } from 'react-native';
 import { Layout } from '../../../components';
 import { useAppContext } from '../../../services/AppContext';
 import scheduleService from '../../../services/schedule';
+import storageService from '../../../services/Storage';
+import { STORAGE_KEYS } from '../../../services/Storage/constants';
 
 const raceData = [
   { id: '1', name: 'Rodrigo', startTime: '13:00', endTime: '14:20', duration: '01:20', timeLeft: '22:40' },//here all time related fields will be in seconds and then will convert it into hh:mm
@@ -13,12 +15,33 @@ const raceData = [
 ];
 
 const Schedule = () => {
-  const {data}=useAppContext();
+  const { data } = useAppContext();
   const [scheduleData, setScheDuleData] = useState([]);
 
-  useEffect(()=>{
-    setScheDuleData(scheduleService.getStats(data));
-  },[])
+  //update trip here if not already present
+  const scheduleTrip = async () => {
+    try {
+      const trip = await storageService.get(STORAGE_KEYS.ACTIVE_RACE);
+      if (!trip) {
+        const res = scheduleService.getStats(data);
+        if (res) {
+          setScheDuleData(res.schedule);
+          console.log(res.schedule);
+          await storageService.set(STORAGE_KEYS.ACTIVE_RACE, res);
+        }
+      } else {
+        setScheDuleData(trip);
+      }
+    } catch (error) {
+
+    }
+  }
+
+
+  useEffect(() => {
+    scheduleTrip();
+    // setScheDuleData(scheduleService.getStats(data));
+  }, [data])
 
   const renderRow = ({ item, index }) => {
     const rowStyle = index % 2 === 0 ? styles.rowEven : styles.rowOdd;

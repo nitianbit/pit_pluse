@@ -6,17 +6,19 @@ import scheduleService from './schedule';
 // Create the context
 const AppContext = createContext();
 
+const defaultData={
+    date: new Date(),
+    startTime: moment().unix(),
+    duration: 0,
+    fuelDuration: 0,
+    drivers: [],//{name:'',time:null}
+    stops: [],//{name:'',time:null,start:0,duration:0}
+    // numberOfDrivers: 0,// no use 
+    // numberOfServiceStops: 0, //no use
+}
+
 export const AppProvider = ({ children }) => {
-    const [data, setData] = useState({
-        date: new Date(),
-        startTime: moment().unix(),
-        duration: 0,
-        fuelDuration: 0,
-        drivers: [],//{name:'',time:null}
-        stops: [],//{name:'',time:null,start:0,duration:0}
-        // numberOfDrivers: 0,// no use 
-        // numberOfServiceStops: 0, //no use
-    })
+    const [data, setData] = useState(defaultData);
 
     const [tripStats,setTripStats]=useState({})
 
@@ -52,6 +54,11 @@ export const AppProvider = ({ children }) => {
         setData(prev => ({ ...prev, drivers: prev.drivers.map((driver, i) => i === index ? { ...driver, [key]: value } : driver) }))
     }
 
+    const resetData=()=>{
+       setData(defaultData);
+       setTripStats({});
+    }
+
     useEffect(()=>{
         if(data.drivers.length && data.startTime && data.duration){
             // console.log("==",{duration:data.duration},moment.unix(data.startTime).format('HH:mm'),moment.unix(data.startTime + data.duration*60*60).format('HH:mm'), data.fuelDuration, data.drivers.length)
@@ -79,7 +86,7 @@ export const AppProvider = ({ children }) => {
     return (
         <AppContext.Provider
             value={{
-                updateData, updateDrivers, updateStops, updateDriversData, updateStopsData, data,tripStats
+                updateData, updateDrivers, updateStops, updateDriversData, updateStopsData, data,tripStats,resetData
             }}>
             {children}
         </AppContext.Provider>

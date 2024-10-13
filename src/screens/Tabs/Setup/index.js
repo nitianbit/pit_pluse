@@ -11,6 +11,7 @@ import CounterButton from '../../../components/CounterButton';
 import { ResetSvg } from '../../../assets/svgs';
 import { useAppContext } from '../../../services/AppContext';
 import scheduleService, { getSchedule } from '../../../services/schedule';
+import storageService from '../../../services/Storage';
 
 
 
@@ -22,7 +23,7 @@ const CardItem = ({ theme, children }) => (
 
 const Setup = () => {
   const theme = useThemeColor();
-  const { updateData, updateDrivers, updateStops, updateDriversData, updateStopsData, data, tripStats } = useAppContext();
+  const { updateData, updateDrivers, updateStops, updateDriversData, updateStopsData, data, tripStats, resetData } = useAppContext();
 
   const [open, setOpen] = useState(false);
   const [modal, setModal] = useState({
@@ -34,7 +35,16 @@ const Setup = () => {
   const openModal = (type, visible, index = null) => setModal({ type, visible, index });
   const closeModal = () => setModal({ type: null, visible: false, index: null });
 
-  // getSchedule("10:00", "14:00", 92, 3); 
+  const handleReset=()=>{
+    try {
+      //TODO maybe show loader here
+      closeModal();
+      storageService.clearAll();
+      resetData();
+    } catch (error) {
+      
+    }
+  } 
 
   return (
     <Layout >
@@ -197,7 +207,7 @@ const Setup = () => {
           <TouchableOpacity style={[styles.closeButton, styles.outline]} onPress={closeModal}>
             <Text style={[styles.closeButtonText, { color: COLORS.PRIMARY }]}>Cancel</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
+          <TouchableOpacity style={styles.closeButton} onPress={handleReset}>
             <Text style={styles.closeButtonText}>Yes</Text>
           </TouchableOpacity>
         </View>
