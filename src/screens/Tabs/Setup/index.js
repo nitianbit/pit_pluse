@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Button, TextInput } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Button, TextInput, Pressable } from 'react-native';
 import useThemeColor from '../../../hooks/useThemeColor';
 import { Card, CenteredModal, Layout, ThemedInput, ThemeText } from '../../../components';
 import { Slider } from '@miblanchard/react-native-slider';
@@ -10,6 +10,7 @@ import { convertMinutesToHoursAndMinutes } from '../../../utils/helper';
 import CounterButton from '../../../components/CounterButton';
 import { ResetSvg } from '../../../assets/svgs';
 import { useAppContext } from '../../../services/AppContext';
+import scheduleService, { getSchedule } from '../../../services/schedule';
 
 
 
@@ -21,18 +22,19 @@ const CardItem = ({ theme, children }) => (
 
 const Setup = () => {
   const theme = useThemeColor();
-  const {updateData, updateDrivers, updateStops, updateDriversData, updateStopsData, data}=useAppContext();
+  const {updateData, updateDrivers, updateStops, updateDriversData, updateStopsData, data,tripStats}=useAppContext();
 
   const [open, setOpen] = useState(false);
   const [modal, setModal] = useState({
     type: null,
-    visible: null
+    visible: null,
+    index: null
   });  
 
-  const openModal=(type,visible)=>setModal({type,visible});
-  const closeModal=()=>setModal({type:null,visible:false});
+  const openModal=(type,visible,index=null)=>setModal({type,visible,index});
+  const closeModal=()=>setModal({type:null,visible:false,index:null});
 
-
+  // getSchedule("10:00", "14:00", 92, 3); 
 
   return (
     <Layout >
@@ -79,13 +81,13 @@ const Setup = () => {
               <ThemeText style={[styles.label]} text='Fuel Duration' />
               <View style={styles.sliderView}>
                 <Slider
-                  maximumValue={Math.ceil(24 * 60)}//to seconds //data?.duration*60*60
+                  maximumValue={Math.ceil(4 * 60 * 60)}//to seconds //data?.duration*60*60
                   step={1} //mins wise
                   minimumTrackStyle={{ backgroundColor: COLORS.BOTTOM_ACTIVE_COLOR }}
                   maximumTrackStyle={{ backgroundColor: COLORS.PRIMARY }}
                   thumbTintColor={COLORS.LIGHT}
                   containerStyle={styles.slider}
-                  onSlidingComplete={(value) => updateData('fuelDuration', value[0])}
+                  onValueChange={(value) => updateData('fuelDuration', Math.ceil(value[0]/60))}
                 />
                 <ThemeText style={[styles.value]} text={data?.fuelDuration ? `${convertMinutesToHoursAndMinutes(data?.fuelDuration)}` : '0h 0m'} />
               </View>
@@ -105,16 +107,16 @@ const Setup = () => {
             </View>
           </CardItem>
 
-          {data?.drivers.length ?<CardItem theme={theme}>
+          {data?.drivers.length ? <CardItem theme={theme}>
             <View style={styles.driverRow}>
               {data?.drivers?.map((item, index) => (
-                <View style={[styles.labelContainer,styles.items]} key={index}>
-                  <ThemedInput style={styles.input} value={item?.name} onChangeText={(text) => updateDriversData(index, 'name', text)} />
-                  <ThemeText key={index} style={styles.label} text={item?.time} />
+                <View style={[styles.labelContainer, styles.items]} key={index}>
+                  <ThemedInput placeholder='Driver Name' style={styles.input} value={item?.name} onChangeText={(text) => updateDriversData(index, 'name', text)} />
+                  <ThemeText  style={styles.label} text={convertMinutesToHoursAndMinutes(tripStats?.driverDurationList?.[index]??0)} /* text={item?.time} */ />
                 </View>
               ))}
             </View>
-          </CardItem>:null}
+          </CardItem> : null}
 
           <CardItem theme={theme}>
             <View style={styles.labelContainer}>
@@ -134,7 +136,9 @@ const Setup = () => {
               {data?.stops?.map((item, index) => (
                 <View style={[styles.labelContainer,styles.items]} key={index}>
                   {/* <ThemeText key={index} style={styles.label} text={item?.name} /> */}
-                  <ThemedInput style={styles.input} value={item?.name} onChangeText={(text) => updateStopsData(index, 'name', text)} />
+                  <ThemedInput placeholder='Stop Name' style={styles.input} value={item?.name} onChangeText={(text) => updateStopsData(index, 'name', text)} />
+                  <Button title={moment(item?.start).format('HH:mm')} onPress={() => openModal(MODAL_TYPE.SERVICE_STOP_TIME,true,index)} />
+                  <ThemedInput placeholder='Duration (min)' keyboardType='numeric' style={styles.input} value={item?.duration??""} onChangeText={(text) => updateStopsData(index, 'duration', text)} />
                   <ThemeText key={index} style={styles.label} text={item?.time} />
                 </View>
               ))}
@@ -172,6 +176,20 @@ const Setup = () => {
           setOpen(false)
         }}
       />
+
+      {modal.type === MODAL_TYPE.SERVICE_STOP_TIME && ![null, undefined].includes(modal.index) ? <DatePicker
+        modal
+        open={modal.type === MODAL_TYPE.SERVICE_STOP_TIME && modal.visible}
+        mode='time'
+        date={data?.stops?.[modal.index]?.start}
+        onConfirm={(date) => {
+          closeModal();
+          updateStopsData(modal.index, 'start', date)
+        }}
+        onCancel={() => {
+          closeModal();
+        }}
+      /> : null}
       
       <CenteredModal visible={modal.type == MODAL_TYPE.RESET} onClose={closeModal}>
         <ThemeText style={{ fontSize: 18 }}>Are you sure you want to reset ?</ThemeText>

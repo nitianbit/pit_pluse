@@ -1,5 +1,5 @@
 import Splash from "./Splash";
-import { Race, Reset, Schedule, Setup, Stint } from "./Tabs";
+import { Race, Reset, Schedule, Setup, Logs } from "./Tabs";
 
 export {
     Splash,
@@ -7,6 +7,6 @@ export {
     Reset,
     Schedule,
     Setup,
-    Stint
+    Logs
 
 }

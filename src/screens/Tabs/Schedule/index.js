@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ScrollView, StyleSheet } from 'react-native';
 import { Layout } from '../../../components';
+import { useAppContext } from '../../../services/AppContext';
+import scheduleService from '../../../services/schedule';
 
 const raceData = [
   { id: '1', name: 'Rodrigo', startTime: '13:00', endTime: '14:20', duration: '01:20', timeLeft: '22:40' },//here all time related fields will be in seconds and then will convert it into hh:mm
@@ -11,6 +13,12 @@ const raceData = [
 ];
 
 const Schedule = () => {
+  const {data}=useAppContext();
+  const [scheduleData, setScheDuleData] = useState([]);
+
+  useEffect(()=>{
+    setScheDuleData(scheduleService.getStats(data));
+  },[])
 
   const renderRow = ({ item, index }) => {
     const rowStyle = index % 2 === 0 ? styles.rowEven : styles.rowOdd;
@@ -18,10 +26,10 @@ const Schedule = () => {
     return (
       <View style={[styles.row, rowStyle]}>
         <Text style={styles.cell}>{item.name}</Text>
-        <Text style={styles.cell}>{item.startTime}</Text>
-        <Text style={styles.cell}>{item.endTime}</Text>
-        <Text style={styles.cell}>{item.duration}</Text>
-        <Text style={styles.cell}>{item.timeLeft}</Text>
+        <Text style={styles.cell}>{(item.startDriveTime).slice(0, 5)}</Text>
+        <Text style={styles.cell}>{item.endDriveTime.slice(0, 5)}</Text>
+        <Text style={styles.cell}>{scheduleService.minutesToTime(item.drivingDuration).slice(0, 4)}</Text>
+        {/* <Text style={styles.cell}>{item.timeLeft}</Text> */}
       </View>
     );
   };
@@ -37,12 +45,13 @@ const Schedule = () => {
             <Text style={styles.headerText}>Start Time</Text>
             <Text style={styles.headerText}>End Time</Text>
             <Text style={styles.headerText}>Duration</Text>
-            <Text style={styles.headerText}>Time Left</Text>
+            {/* <Text style={styles.headerText}>Time Left</Text> */}
           </View>
 
           {/* Table Rows with Vertical Scroll */}
           <FlatList
-            data={raceData}
+            // data={raceData}
+            data={scheduleData}
             bounces={false}
             renderItem={renderRow}
             keyExtractor={(item) => item.id}

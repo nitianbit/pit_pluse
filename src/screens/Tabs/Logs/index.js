@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-const Stint = () => {
+const Logs = () => {
   return (
     <View>
       <Text>Stint</Text>
@@ -9,6 +9,6 @@ const Stint = () => {
   )
 }
 
-export default Stint
+export default Logs
 
 const styles = StyleSheet.create({})

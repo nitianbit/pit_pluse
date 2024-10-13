@@ -63,8 +63,6 @@ const RaceApp = () => {
         )}
       />
 
-      {/* Race Log */}
-      <Text style={styles.raceLog}>Race Log</Text>
     </Layout>
   );
 };

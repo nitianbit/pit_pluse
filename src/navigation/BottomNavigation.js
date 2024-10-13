@@ -9,7 +9,7 @@ import {
     SetupSvg,
     TimerSvg
 } from '../assets/svgs';
-import { Race, Reset, Schedule, Setup, Stint } from '../screens';
+import { Race, Reset, Schedule, Setup, Logs } from '../screens';
 import { COLORS } from '../utils/constants';
 import { NavName } from './constants';
 
@@ -30,9 +30,9 @@ const data = [
     },
     {
         name: NavName.STINT,
-        title: 'Stint',
+        title: 'Logs',
         Icon: TimerSvg,
-        component: Stint
+        component: Logs
     },
     {
         name: NavName.SCHEDULE,
