@@ -22,17 +22,17 @@ const CardItem = ({ theme, children }) => (
 
 const Setup = () => {
   const theme = useThemeColor();
-  const {updateData, updateDrivers, updateStops, updateDriversData, updateStopsData, data,tripStats}=useAppContext();
+  const { updateData, updateDrivers, updateStops, updateDriversData, updateStopsData, data, tripStats } = useAppContext();
 
   const [open, setOpen] = useState(false);
   const [modal, setModal] = useState({
     type: null,
     visible: null,
     index: null
-  });  
+  });
 
-  const openModal=(type,visible,index=null)=>setModal({type,visible,index});
-  const closeModal=()=>setModal({type:null,visible:false,index:null});
+  const openModal = (type, visible, index = null) => setModal({ type, visible, index });
+  const closeModal = () => setModal({ type: null, visible: false, index: null });
 
   // getSchedule("10:00", "14:00", 92, 3); 
 
@@ -87,7 +87,7 @@ const Setup = () => {
                   maximumTrackStyle={{ backgroundColor: COLORS.PRIMARY }}
                   thumbTintColor={COLORS.LIGHT}
                   containerStyle={styles.slider}
-                  onValueChange={(value) => updateData('fuelDuration', Math.ceil(value[0]/60))}
+                  onValueChange={(value) => updateData('fuelDuration', Math.ceil(value[0] / 60))}
                 />
                 <ThemeText style={[styles.value]} text={data?.fuelDuration ? `${convertMinutesToHoursAndMinutes(data?.fuelDuration)}` : '0h 0m'} />
               </View>
@@ -112,7 +112,7 @@ const Setup = () => {
               {data?.drivers?.map((item, index) => (
                 <View style={[styles.labelContainer, styles.items]} key={index}>
                   <ThemedInput placeholder='Driver Name' style={styles.input} value={item?.name} onChangeText={(text) => updateDriversData(index, 'name', text)} />
-                  <ThemeText  style={styles.label} text={convertMinutesToHoursAndMinutes(tripStats?.driverDurationList?.[index]??0)} /* text={item?.time} */ />
+                  <ThemeText style={styles.label} text={convertMinutesToHoursAndMinutes(tripStats?.driverDurationList?.[index] ?? 0)} /* text={item?.time} */ />
                 </View>
               ))}
             </View>
@@ -134,11 +134,11 @@ const Setup = () => {
           {data?.stops.length ? <CardItem theme={theme}>
             <View style={styles.driverRow}>
               {data?.stops?.map((item, index) => (
-                <View style={[styles.labelContainer,styles.items]} key={index}>
+                <View style={[styles.labelContainer, styles.items]} key={index}>
                   {/* <ThemeText key={index} style={styles.label} text={item?.name} /> */}
                   <ThemedInput placeholder='Stop Name' style={styles.input} value={item?.name} onChangeText={(text) => updateStopsData(index, 'name', text)} />
-                  <Button title={moment(item?.start).format('HH:mm')} onPress={() => openModal(MODAL_TYPE.SERVICE_STOP_TIME,true,index)} />
-                  <ThemedInput placeholder='Duration (min)' keyboardType='numeric' style={styles.input} value={item?.duration??""} onChangeText={(text) => updateStopsData(index, 'duration', text)} />
+                  <Button title={moment(item?.start).format('HH:mm')} onPress={() => openModal(MODAL_TYPE.SERVICE_STOP_TIME, true, index)} />
+                  <ThemedInput placeholder='Duration (min)' keyboardType='numeric' style={styles.input} value={item?.duration ?? ""} onChangeText={(text) => updateStopsData(index, 'duration', text)} />
                   <ThemeText key={index} style={styles.label} text={item?.time} />
                 </View>
               ))}
@@ -152,10 +152,10 @@ const Setup = () => {
         <Card>
           <View style={styles.stintAnalysis}>
             <View style={styles.stintItem}>
-              <ThemeText color={COLORS.DARK} style={styles.stintText} text={`Qty of Stints: Not available`} />
+              <ThemeText color={COLORS.DARK} style={styles.stintText} text={`Qty of Stints: ${tripStats?.totalStints ? tripStats?.totalStints : 'Not available'}`} />
             </View>
             <View style={styles.stintItem}>
-              <ThemeText color={COLORS.DARK} style={styles.stintText} text={`Avg Stint Duration: Not available`} />
+              <ThemeText color={COLORS.DARK} style={styles.stintText} text={`Avg Stint Duration: ${tripStats?.avgStintDuration ? parseFloat(tripStats?.avgStintDuration).toFixed(2) : 'Not available'}`} />
             </View>
           </View>
         </Card>
@@ -190,12 +190,12 @@ const Setup = () => {
           closeModal();
         }}
       /> : null}
-      
+
       <CenteredModal visible={modal.type == MODAL_TYPE.RESET} onClose={closeModal}>
-        <ThemeText style={{ fontSize: 18 }} text='Are you sure you want to reset ?'/>
+        <ThemeText style={{ fontSize: 18 }} text='Are you sure you want to reset ?' />
         <View style={styles.btns}>
-          <TouchableOpacity style={[styles.closeButton,styles.outline]} onPress={closeModal}>
-            <Text style={[styles.closeButtonText,{color:COLORS.PRIMARY}]}>Cancel</Text>
+          <TouchableOpacity style={[styles.closeButton, styles.outline]} onPress={closeModal}>
+            <Text style={[styles.closeButtonText, { color: COLORS.PRIMARY }]}>Cancel</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
             <Text style={styles.closeButtonText}>Yes</Text>
@@ -291,41 +291,41 @@ const styles = StyleSheet.create({
   driverRow: {
     flex: 1
   },
-  items:{
-    paddingVertical:10,
+  items: {
+    paddingVertical: 10,
   },
   input: {
-    flex:1,
+    flex: 1,
     fontSize: 18,
   },
-  resetBtn:{
-    position:'absolute',
-    top:0,
-    right:0,
-    padding:10,
-    zIndex:999
+  resetBtn: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    padding: 10,
+    zIndex: 999
   },
   closeButton: {
     marginTop: 15,
     padding: 10,
     backgroundColor: '#2196F3',
     borderRadius: 5,
-    width:'45%'
+    width: '45%'
   },
   closeButtonText: {
     color: 'white',
     fontWeight: 'bold',
-    textAlign:'center'
+    textAlign: 'center'
   },
-  btns:{
-    flexDirection:'row',
-    justifyContent:'space-around',
-    width:'100%'
+  btns: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%'
   },
-  outline:{
-    borderWidth:1,
-    borderColor:'#2196F3',
-    backgroundColor:'#FFF'
+  outline: {
+    borderWidth: 1,
+    borderColor: '#2196F3',
+    backgroundColor: '#FFF'
   }
 
 });

@@ -18,10 +18,7 @@ export const AppProvider = ({ children }) => {
         // numberOfServiceStops: 0, //no use
     })
 
-    const [tripStats,setTripStats]=useState({
-        schedule:[],
-        driverDurationList:[]
-    })
+    const [tripStats,setTripStats]=useState({})
 
     const updateDrivers = (add = true) => {
         if (!data.drivers.length && !add) return
@@ -70,6 +67,10 @@ export const AppProvider = ({ children }) => {
             
 
             // scheduleService.getStats(data)
+           const res= scheduleService.getStats(data);
+           console.log(res)
+           setTripStats(res);
+           //TODO save in local storage the original data and calculate this data from there
         }
     },[data])
 

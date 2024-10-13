@@ -89,6 +89,7 @@ class ScheduleService {
     constructor() {
         this.currentDriver = 0; // Move currentDriver into the class
         this.driverDurationList = [];
+        this.data={};
     }
 
     // Helper function to convert time (HH:MM) to total minutes
@@ -199,7 +200,21 @@ class ScheduleService {
         }
         //TODO  TOTAL STINTS WILL BE res.flat().LENGTH - NO OF STOPS (excluding start and stop) 
         //TODO AVG STINT DURATION = SUM OF total duration of all stints(driverDurationList) / total number of stints
-        return res.flat();
+        const totalStints= res.flat().length - (data.stops?.length ?? 0);
+        const totalDuration = driverDurationList.reduce((a, b) => a + b, 0);
+        const avgStintDuration = driverDurationList.reduce((a, b) => a + b, 0) / totalStints;
+        // const avgStintDuration = driverDurationList.reduce((a, b) => a + b, 0) / driverDurationList.length;
+        
+        this.data = {
+            schedule: res.flat(),
+            driverDurationList,
+            totalStints,
+            totalDuration,
+            avgStintDuration
+        }
+
+        return this.data;
+        // return res.flat();
     }
 }
 
