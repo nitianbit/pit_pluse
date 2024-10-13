@@ -86,7 +86,7 @@ export const AppProvider = ({ children }) => {
     return (
         <AppContext.Provider
             value={{
-                updateData, updateDrivers, updateStops, updateDriversData, updateStopsData, data,tripStats,resetData
+                updateData, updateDrivers, updateStops, updateDriversData, updateStopsData, data,tripStats,resetData,setTripStats,setData
             }}>
             {children}
         </AppContext.Provider>

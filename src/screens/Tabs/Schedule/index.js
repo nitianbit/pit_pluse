@@ -15,22 +15,27 @@ const raceData = [
 ];
 
 const Schedule = () => {
-  const { data } = useAppContext();
+  const { data,setTripStats,setData } = useAppContext();
   const [scheduleData, setScheDuleData] = useState([]);
 
   //update trip here if not already present
   const scheduleTrip = async () => {
     try {
       const trip = await storageService.get(STORAGE_KEYS.ACTIVE_RACE);
-      if (!trip) {
+      if (!trip && data) {
         const res = scheduleService.getStats(data);
         if (res) {
           setScheDuleData(res.schedule);
           console.log(res.schedule);
-          await storageService.set(STORAGE_KEYS.ACTIVE_RACE, res);
+          await storageService.saveKey(STORAGE_KEYS.ACTIVE_RACE, data);
         }
       } else {
-        setScheDuleData(trip);
+        const res = scheduleService.getStats(trip);
+        if (res) {
+          setScheDuleData(res.schedule);
+          setTripStats(res);
+          setData(trip);
+        } 
       }
     } catch (error) {
 
@@ -77,7 +82,8 @@ const Schedule = () => {
             data={scheduleData}
             bounces={false}
             renderItem={renderRow}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item, index) => index.toString()}
+
           />
         </View>
 
