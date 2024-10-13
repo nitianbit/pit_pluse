@@ -1,4 +1,9 @@
 export const STORAGE_KEYS = {
     TOKEN: 'TOKEN',
+    USER: 'USER',
+    ACTIVE_RACE: 'ACTIVE_RACE',
+    SCHEDULE: 'SCHEDULE',
+    RACE: 'RACE',
+    RACE_LOGS: 'RACE_LOGS',
 
 }

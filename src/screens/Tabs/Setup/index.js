@@ -192,7 +192,7 @@ const Setup = () => {
       /> : null}
       
       <CenteredModal visible={modal.type == MODAL_TYPE.RESET} onClose={closeModal}>
-        <ThemeText style={{ fontSize: 18 }}>Are you sure you want to reset ?</ThemeText>
+        <ThemeText style={{ fontSize: 18 }} text='Are you sure you want to reset ?'/>
         <View style={styles.btns}>
           <TouchableOpacity style={[styles.closeButton,styles.outline]} onPress={closeModal}>
             <Text style={[styles.closeButtonText,{color:COLORS.PRIMARY}]}>Cancel</Text>

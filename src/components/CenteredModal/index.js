@@ -1,17 +1,20 @@
 import React from 'react';
 import { Modal, View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import ThemeText from '../ThemeText';
+import useThemeColor from '../../hooks/useThemeColor';
 
 const CenteredModal = ({ visible, onClose, children }) => {
+  const theme = useThemeColor();
+
   return (
     <Modal
       transparent={true}
       visible={visible}
       animationType="fade"
-      onRequestClose={onClose} 
+      onRequestClose={onClose}
     >
       <View style={styles.modalContainer}>
-        <View style={styles.modalContent}>
+        <View style={[styles.modalContent, { backgroundColor: theme.background || 'white' }]}>
           {children}
         </View>
       </View>
@@ -30,10 +33,18 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: Dimensions.get('window').width * 0.8,  // Modal width is 80% of screen width
-    backgroundColor: 'white',
     padding: 20,
     borderRadius: 10,
     alignItems: 'center',  // Center items in modal
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    elevation: 5,
   },
- 
+
 });
