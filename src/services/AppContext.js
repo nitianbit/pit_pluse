@@ -15,12 +15,18 @@ const defaultData={
     stops: [],//{name:'',time:null,start:0,duration:0}
     // numberOfDrivers: 0,// no use 
     // numberOfServiceStops: 0, //no use
+
+    status:0,//0->not started, 1->started, 2->finished
+    durationCovered:0,//in seconds
+    currentStint:0,//current stint
+    redFlag:false,
+    blackFlag:false,
+    greenFlag:false
 }
 
 export const AppProvider = ({ children }) => {
     const [data, setData] = useState(defaultData);
-
-    const [tripStats,setTripStats]=useState({})
+    const [tripStats,setTripStats]=useState({});
 
     const updateDrivers = (add = true) => {
         if (!data.drivers.length && !add) return

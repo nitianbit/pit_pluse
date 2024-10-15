@@ -152,9 +152,9 @@ class ScheduleService {
         }
 
         // Optionally, log the schedule
-        stintSchedule.forEach((current) => {
-            console.log(`${current.name}, ${current.startDriveTime}, ${current.endDriveTime}, ${current.drivingDuration.toFixed(2)} minutes`);
-        });
+        // stintSchedule.forEach((current) => {
+        //     console.log(`${current.name}, ${current.startDriveTime}, ${current.endDriveTime}, ${current.drivingDuration.toFixed(2)} minutes`);
+        // });
 
         return stintSchedule;
     }
@@ -216,6 +216,97 @@ class ScheduleService {
         return this.data;
         // return res.flat();
     }
+
+    getCurrentDriverAndTimeLeft() {
+        const currentTime=moment().unix();
+        const currentMinutes = this.timeToMinutes(moment.unix(currentTime).format('HH:mm')); // Current time in minutes
+
+        const schedule = this.data.schedule; // The complete schedule
+        console.log(schedule)
+        if(!this.data.schedule){
+            return {
+                currentDriver: null,
+                timeLeft: 0 
+            };
+        }
+
+        for (let stint of schedule) {
+            const startMinutes = this.timeToMinutes(stint.startDriveTime);
+            const endMinutes = this.timeToMinutes(stint.endDriveTime);
+
+            // If the current time is within this driver's stint
+            if (currentMinutes >= startMinutes && currentMinutes < endMinutes) {
+                const timeLeft = endMinutes - currentMinutes; // Time left for the driver
+                return {
+                    currentDriver: stint.name,
+                    timeLeft: timeLeft 
+                };
+            }
+        }
+
+        return {
+            currentDriver: null,
+            timeLeft: 0 
+        };
+    }
+
+    getDriversAndTimeLeft() {
+        const currentTime = moment().unix(); // Current time as a timestamp
+        const currentMinutes = this.timeToMinutes(moment.unix(currentTime).format('HH:mm')); // Current time in minutes
+    
+        const schedule = this.data.schedule; // The complete schedule
+        if (!schedule || schedule.length === 0) {
+            return {
+                drivers: {},
+                currentDriver: null,
+                timeLeft: 0
+            };
+        }
+    
+        let drivers = {}; // Initialize an object for driver details
+    
+        // Set up drivers with total driving duration and initialize remaining time
+        this.data.driverDurationList.forEach((totalDrivingDuration, index) => {
+            drivers[index] = {
+                totalDrivingDuration: totalDrivingDuration.toFixed(2),
+                remainingTime: 0 // Initialize remaining time
+            };
+        });
+    
+        let currentDriver = null;
+        let timeLeft = 0;
+    
+        // Iterate through each stint and calculate remaining time
+        for (let stint of schedule) {
+            const startMinutes = this.timeToMinutes(stint.startDriveTime);
+            const endMinutes = this.timeToMinutes(stint.endDriveTime);
+            const driver = stint.name;
+    
+            if (currentMinutes < endMinutes) {
+                // Calculate the remaining time in this stint
+                const remainingInStint = endMinutes - Math.max(currentMinutes, startMinutes);
+    
+                // Add remaining time for this driver
+                drivers[driver].remainingTime += remainingInStint;
+    
+                // If the current time is within this driver's stint, set them as the current driver
+                if (currentMinutes >= startMinutes && currentMinutes < endMinutes) {
+                    currentDriver = driver;
+                    timeLeft = remainingInStint;
+                }
+            }
+        }
+    
+        return {
+            drivers,       // Object containing driver durations including remaining time across all stints
+            currentDriver, // Active driver
+            timeLeft       // Time left for the current driver in this stint
+        };
+    }
+
+      
+    
+
 }
 
 const scheduleService = new ScheduleService();
