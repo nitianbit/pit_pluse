@@ -19,9 +19,9 @@ const Stack = createStackNavigator();
 
     return (
         <NavigationContainer theme={MyTheme}>
-            <Stack.Navigator initialRouteName={NavName.BottomNavigation} >
-                <Stack.Screen name={NavName.HOME} component={BottomNavigation} options={{ headerShown: false }} />
+            <Stack.Navigator initialRouteName={NavName.SPLASH} >
                 <Stack.Screen name={NavName.SPLASH} component={Splash} options={{ headerShown: false }} />
+                <Stack.Screen name={NavName.HOME} component={BottomNavigation} options={{ headerShown: false }} />
             </Stack.Navigator>
         </NavigationContainer>
     );
