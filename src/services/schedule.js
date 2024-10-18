@@ -100,7 +100,8 @@ class ScheduleService {
 
     // Helper function to convert total minutes to time (HH:MM)
     minutesToTime(minutes) {
-        const hours = Math.floor(minutes / 60);
+        let hours = Math.floor(minutes / 60);  // Wrap hours around 24
+        // const hours = Math.floor(minutes / 60);
         const mins = minutes % 60;
         return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`; // Pad with leading zeros
     }
@@ -152,9 +153,9 @@ class ScheduleService {
         }
 
         // Optionally, log the schedule
-        // stintSchedule.forEach((current) => {
-        //     console.log(`${current.name}, ${current.startDriveTime}, ${current.endDriveTime}, ${current.drivingDuration.toFixed(2)} minutes`);
-        // });
+        stintSchedule.forEach((current) => {
+            console.log(`${current.name}, ${current.startDriveTime}, ${current.endDriveTime}, ${current.drivingDuration.toFixed(2)} minutes`);
+        });
 
         return stintSchedule;
     }
@@ -223,6 +224,13 @@ class ScheduleService {
 
         const schedule = this.data.schedule; // The complete schedule
         console.log(schedule)
+        if(!this.data.schedule){
+            return {
+                currentDriver: null,
+                timeLeft: 0 
+            };
+        }
+        //TODO create schedule if not found
         if(!this.data.schedule){
             return {
                 currentDriver: null,
@@ -301,6 +309,49 @@ class ScheduleService {
             drivers,       // Object containing driver durations including remaining time across all stints
             currentDriver, // Active driver
             timeLeft       // Time left for the current driver in this stint
+        };
+    }
+
+    getRemainingRaceAndFuelTime() {
+        const currentTime = moment().unix(); // Current time as a timestamp
+        const currentMinutes = this.timeToMinutes(moment.unix(currentTime).format('HH:mm')); // Current time in minutes
+
+        const schedule = this.data.schedule; // The complete schedule
+        if (!schedule || schedule.length === 0) {
+            return {
+                remainingRaceTime: 0,
+                remainingFuelTime: 0
+            };
+        }
+
+        let remainingRaceTime = 0;
+        let remainingFuelTime = 0;
+
+        // Calculate total race time
+        const raceStart = this.timeToMinutes(schedule[0].startDriveTime);
+        const raceEnd = this.timeToMinutes(schedule[schedule.length - 1].endDriveTime);
+        const totalRaceTime = raceEnd - raceStart;
+
+        // Remaining race time is the difference between current time and race end time
+        if (currentMinutes < raceEnd) {
+            remainingRaceTime = raceEnd - currentMinutes;
+        }
+
+        // Find remaining time for the next fuel stop by checking the schedule
+        for (let stint of schedule) {
+            const startMinutes = this.timeToMinutes(stint.startDriveTime);
+            const endMinutes = this.timeToMinutes(stint.endDriveTime);
+
+            // If current time is within a stint, find the remaining time in this stint
+            if (currentMinutes >= startMinutes && currentMinutes < endMinutes) {
+                remainingFuelTime = endMinutes - currentMinutes;
+                break;
+            }
+        }
+
+        return {
+            remainingRaceTime,
+            remainingFuelTime
         };
     }
 

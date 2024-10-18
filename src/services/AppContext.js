@@ -19,9 +19,12 @@ const defaultData={
     status:0,//0->not started, 1->started, 2->finished
     durationCovered:0,//in seconds
     currentStint:0,//current stint
-    redFlag:false,
-    blackFlag:false,
-    greenFlag:false
+    flags:{
+        redFlag:false,
+        blackFlag:false,
+        greenFlag:false,
+    },
+    logs:[]
 }
 
 export const AppProvider = ({ children }) => {

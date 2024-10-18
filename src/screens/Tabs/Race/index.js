@@ -45,6 +45,7 @@ const RaceApp = () => {
 
     // Function to calculate each driver's progress
     const getDriverProgress = (index) => {
+      scheduleService.getStats(data);
       const driverStats=scheduleService.getDriversAndTimeLeft();
       if (!driverStats) return 0;
       const driverData = driverStats?.drivers?.[index];
@@ -52,11 +53,11 @@ const RaceApp = () => {
       // return ((driverData.totalDrivingDuration - driverData.remainingTime) / driverData.totalDrivingDuration) * 100;
       return {
         progress:(( driverData.remainingTime) / driverData.totalDrivingDuration) * 100,
-        totalDuration: driverData.totalDrivingDuration
+        totalDuration: driverData.totalDrivingDuration,
+        remainingTime: driverData.remainingTime
       };
     };
   
-
 
   return (
     <Layout style={styles.container}>
@@ -95,19 +96,19 @@ const RaceApp = () => {
         data={data?.drivers}
         keyExtractor={(item) => item.id}
         renderItem={({ item,index }) => {
-          const {progress,totalDuration}=getDriverProgress(index);
+          const {progress,totalDuration,remainingTime}=getDriverProgress(index);
 
          return (<View key={index} style={[styles.participantRow, index===stats.currentDriver && styles.selectedDriver]}>
             <View style={styles.driverRow}>
             <Text style={styles.participantName}>{item.name}</Text>
-            <Text style={styles.participantTime}>{formatTime((totalDuration??0)*60)}</Text>
+            <Text style={styles.participantTime}>{formatTime((remainingTime??0)*60)}</Text>
             </View>
-            <View style={[styles.fill, { width: `${progress}%`, backgroundColor: '#4A90E2' }]} />
+            <View style={[styles.fill, { width: `${progress}%`, backgroundColor: '#999' }]} />
           </View>)
         }}
       />
 
-      <GenerateLogs />
+      <GenerateLogs  />
 
     </Layout>
   );

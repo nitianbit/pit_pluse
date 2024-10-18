@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ScrollView, StyleSheet } from 'react-native';
-import { Layout } from '../../../components';
+import { Layout, ThemeText } from '../../../components';
 import { useAppContext } from '../../../services/AppContext';
 import scheduleService from '../../../services/schedule';
 import storageService from '../../../services/Storage';
@@ -33,8 +33,8 @@ const Schedule = () => {
         const res = scheduleService.getStats(trip);
         if (res) {
           setScheDuleData(res.schedule);
-          setTripStats(res);
-          setData(trip);
+          // setTripStats(res);
+          // setData(trip);
         } 
       }
     } catch (error) {
@@ -54,9 +54,9 @@ const Schedule = () => {
     return (
       <View style={[styles.row, rowStyle]}>
         <Text style={styles.cell}>{item.name}</Text>
-        <Text style={styles.cell}>{(item.startDriveTime).slice(0, 5)}</Text>
-        <Text style={styles.cell}>{item.endDriveTime.slice(0, 5)}</Text>
-        <Text style={styles.cell}>{scheduleService.minutesToTime(item.drivingDuration).slice(0, 4)}</Text>
+        <Text style={styles.cell}>{(item.startDriveTime)}</Text>
+        <Text style={styles.cell}>{item.endDriveTime}</Text>
+        <Text style={styles.cell}>{scheduleService.minutesToTime(item.drivingDuration)}</Text>
         {/* <Text style={styles.cell}>{item.timeLeft}</Text> */}
       </View>
     );
@@ -65,6 +65,7 @@ const Schedule = () => {
   return (
     <Layout style={styles.container}>
       {/* Header */}
+      <ThemeText style={styles.title} text="Race Schedule" />
       <ScrollView horizontal style={styles.container} bounces={false}>
         <View style={styles.container}>
 
@@ -135,4 +136,12 @@ const styles = StyleSheet.create({
     color: '#fff',
     minWidth: 100, // Adjust column width for horizontal scrolling
   },
+  title: {
+    textAlign: 'center',
+    fontSize: 20,
+    fontWeight: '500',
+    marginVertical: 20,
+    borderBottomColor: '#999',
+    borderBottomWidth: 1
+  }
 });
