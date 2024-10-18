@@ -1,5 +1,6 @@
 import moment from "moment";
 import { MessageType, showMessage } from "react-native-flash-message"
+import { FLAG_TYPE, getFlagTypeString } from "./constants";
 
 
 export const displayMessage = ({ type, message, description = "" }) => {
@@ -25,3 +26,23 @@ export const convertMinutesToHoursAndMinutes=(minutes) =>{
   
     return `${hours}h ${minutes}m ${seconds}s`;
   }; 
+
+export const getDriverNameUsingIndex=(index,drivers)=>{
+    return drivers[index]?.name??`Driver ${index+1}`
+}
+
+export const getEvent = (flags = {}) => {
+    let event = ""; 
+
+    // Iterate through key-value pairs of the flags object
+    for (let [key, value] of Object.entries(flags)) {
+         if (value) {  // Check if the flag is true
+            event += `${getFlagTypeString(key)}, `;
+        }
+    }
+
+    // Remove trailing comma and space, if present
+    return event.trim().replace(/,$/, '');
+};
+
+ 

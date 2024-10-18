@@ -62,3 +62,22 @@ export const RACE_STATUS={
   CANCELLED:3,
   SERVICE_STOP_TIME:'SERVICE_STOP_TIME',
 }
+
+export const FLAG_TYPE={
+  RED_FLAG:'redFlag',
+  BLACK_FLAG:'blackFlag',
+  GREEN_FLAG:'greenFlag',
+}
+
+export const getFlagTypeString=(flagType)=>{
+  switch (flagType) {
+    case FLAG_TYPE.RED_FLAG:
+      return 'Red Flag';
+    case FLAG_TYPE.BLACK_FLAG:
+      return 'Black Flag';
+    case FLAG_TYPE.GREEN_FLAG:
+      return 'Green Flag';
+    default:
+      return 'N/A';
+  }
+}
