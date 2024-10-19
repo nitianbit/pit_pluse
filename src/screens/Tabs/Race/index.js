@@ -38,6 +38,12 @@ const RaceApp = () => {
     return (timeLeft / tripDuration * 100);
   }
 
+  const fuelDuration=(data)=>{
+    // scheduleService.getStats(data);
+    const fuelData=scheduleService.getRemainingRaceAndFuelTime();
+    return (fuelData.remainingFuelTime / fuelData.currentStintDuration * 100);
+  }
+
   const startRace = () => {
     setData(prev => ({ ...prev, status: RACE_STATUS.STARTED }));
     //TODO add log here
@@ -78,10 +84,10 @@ const RaceApp = () => {
 
         {/* Fuel Timer */}
         <View style={styles.timerBox}>
-          <View style={[styles.fill, { width: `${fuelProgress}%`, backgroundColor: '#FF5A5F' }]} />
+          <View style={[styles.fill, { width: `${fuelDuration(data)}%`, backgroundColor: '#FF5A5F' }]} />
           <View style={styles.contentContainer}>
             <FuelIcon />
-            <Text style={styles.timerText}>{fuelTime}</Text>
+            <Text style={styles.timerText}>{formatTime(scheduleService.getRemainingRaceAndFuelTime().remainingFuelTime*60)}</Text>
           </View>
         </View>
       </View>
@@ -178,14 +184,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#333',
     borderRadius: 8,
     marginVertical: 5,
+    overflow: 'hidden',
   },
   participantName: {
     color: '#FFF',
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight:'bold'
   },
   participantTime: {
     color: '#FFF',
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight:'bold'
   },
   raceLog: {
     textAlign: 'center',
@@ -194,8 +203,8 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   selectedDriver:{
-    borderWidth:1,
-    borderColor:'red'
+    borderWidth:2,
+    borderColor:'#4A90E2'
   },
   driverRow:{
     zIndex:999,
