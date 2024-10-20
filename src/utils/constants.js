@@ -1,3 +1,4 @@
+import moment from "moment";
 import { Dimensions } from "react-native"
 
 export const COLORS = {
@@ -81,3 +82,55 @@ export const getFlagTypeString=(flagType)=>{
       return 'N/A';
   }
 }
+
+export const DEFAULT_RACE_DATA={
+  date: new Date(),
+  startTime: moment().unix(),
+  duration: 0,
+  fuelDuration: 0,
+  drivers: [],//{name:'',time:null}
+  stops: [],//{name:'',time:null,start:0,duration:0}
+  // numberOfDrivers: 0,// no use 
+  // numberOfServiceStops: 0, //no use
+
+
+}
+
+export const DEFAULT_STATS_DATA= {
+  race: {
+      startTime: 0,
+      duration: 0,//total tripDuration
+      durationCovered: 0
+  },
+
+  flag: {
+      redFlag: false, //(required as we need to halt the timer for fuel)
+      // blackFlag:boolean,//(just for log so no need to store),
+  },
+
+  stint: {
+      currentStintDuration: 0,
+      durationCovered: 0,
+      currentDriver:null,
+  },
+
+  driverStats: {
+      // [driverIndex]: {
+      //     totalDrivingDuration: seconds,
+      //     durationCovered: seconds
+      // }
+  },
+  
+  logs: []
+}
+
+
+// status:0,//0->not started, 1->started, 2->finished
+// durationCovered:0,//in seconds
+// currentStint:0,//current stint
+// flags:{
+//     redFlag:false,
+//     blackFlag:false,
+//     greenFlag:false,
+// },
+// logs:[]
