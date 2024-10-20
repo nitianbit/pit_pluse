@@ -41,7 +41,7 @@ class StintStore {
         storageService.saveKey(STORAGE_KEYS.STINT_DATA, JSON.stringify(stintDataToSave));
     }
 
-    async loadStintData() {
+     loadStintData=async()=> {
         try {
             const savedData = JSON.parse(await storageService.get(STORAGE_KEYS.STINT_DATA));
             if (savedData) {
@@ -61,7 +61,7 @@ class StintStore {
         }
     }
 
-    stopStint() {
+    stopStint=()=> {
         clearInterval(this.timerInterval);
         this.saveStintData(); // Save one last time before stopping
     }

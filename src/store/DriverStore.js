@@ -16,7 +16,7 @@ class DriverStore {
     }
 
     //this function needs to call every second from the timer
-    updateDriverStats(driverId, totalDrivingDuration, durationCovered) {
+    updateDriverStats=(driverId, totalDrivingDuration, durationCovered)=> {
         if (!this.driverStats[driverId]) {
             this.driverStats[driverId] = { totalDrivingDuration: 0, durationCovered: 0 };
         }
@@ -26,11 +26,11 @@ class DriverStore {
         this.saveDriverData(); // Save changes to localStorage
     }
 
-    saveDriverData() {
+    saveDriverData=()=> {
         storageService.saveKey(STORAGE_KEYS.DRIVER_STATS, JSON.stringify(this.driverStats));
     }
 
-    async loadDriverData() {
+      loadDriverData=async()=> {
         try {
             const savedData = JSON.parse(await storageService.get(STORAGE_KEYS.DRIVER_STATS));
             if (savedData) {
@@ -42,7 +42,7 @@ class DriverStore {
     }
 
     // Start the driver stats update interval
-    startDriverStatsInterval() {
+    startDriverStatsInterval=() =>{
         if (this.timerInterval) {
             this.stopDriverStatsInterval();
         }
@@ -57,12 +57,12 @@ class DriverStore {
         }, 1000); // Update every second
     }
 
-    stopDriverStatsInterval() {
+    stopDriverStatsInterval=()=> {
         clearInterval(this.timerInterval);
         this.saveDriverData(); // Save one last time before stopping
     }
 
-    changeCurrentDriver(driverId) {
+    changeCurrentDriver=(driverId)=> {
         //fetch the new driver's already coveredDuratoin and duration he need to covered from localstorage
         const totalDrivingDuration = this.driverStats[driverId].totalDrivingDuration;
         const durationCovered = this.driverStats[driverId].durationCovered;

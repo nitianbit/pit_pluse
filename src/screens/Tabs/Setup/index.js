@@ -24,7 +24,7 @@ const CardItem = ({ theme, children }) => (
 const Setup = () => {
   const theme = useThemeColor();
    const { data, stats } = raceStore;
-   console.log(stats)
+   
 
   const [open, setOpen] = useState(false);
   const [modal, setModal] = useState({

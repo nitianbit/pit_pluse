@@ -10,7 +10,7 @@ import raceStore from '../../store/RaceStore'
 
 
 const GenerateLogs = () => {
-  const { data } = raceStore;
+  const { data ,startRace,stats} = raceStore;
   const [actionModal, setActionModal] = useState(false);
   const toggleActionModal = () => setActionModal(prev => !prev);
 
@@ -54,14 +54,11 @@ const GenerateLogs = () => {
   }
 
 
-  const startRace = () => {
-    //TODO add log here
-  };
 
   return (
     <>
       {/* Start Race Button */}
-      {data?.status === RACE_STATUS.NOT_STARTED ? <TouchableOpacity style={styles.startButton} onPress={startRace}>
+      {!data.status ||data?.status == RACE_STATUS.NOT_STARTED ? <TouchableOpacity style={styles.startButton} onPress={startRace}>
         <Text style={styles.buttonText}>Start Race</Text>
       </TouchableOpacity> : null}
 

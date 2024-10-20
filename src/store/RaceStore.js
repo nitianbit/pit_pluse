@@ -1,8 +1,8 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, runInAction } from "mobx";
 import { DEFAULT_STATS_DATA, DEFAULT_RACE_DATA, RACE_STATUS } from "../utils/constants";
 import storageService from "../services/Storage";
 import { STORAGE_KEYS } from "../services/Storage/constants";
-import moment from "moment";
+import moment, { duration } from "moment";
 import scheduleService from "../services/schedule";
 
 // Debounce function
@@ -38,18 +38,26 @@ class RaceStore {
     }
 
     // Start the race timer
-    startRace() {
+    startRace = () => {
         //cancel previous timer if any
         if (this.timerInterval) {
             this.stopRace();
         }
-        const currentTime = moment().unix();
-        this.stats.race.startTime = this.stats.race.startTime || currentTime; // Set if not already set
+        let currentTime = moment().unix();
+        runInAction(() => {
+            this.stats.race.startTime = this.stats.race.startTime || currentTime; // Set if not already set
+            this.stats.race.duration = (this.data.duration ?? 0) * 60 * 60;//in seconds
+        })
 
         // Start the interval to update durationCovered based on elapsed time since startTime
         this.timerInterval = setInterval(() => {
+            currentTime = moment().unix();
             const elapsedTime = currentTime - this.stats.race.startTime;
-            this.stats.race.durationCovered = elapsedTime;
+            console.log("race timer running....", { elapsedTime, currentTime });
+
+            runInAction(() => {
+                this.stats.race.durationCovered = elapsedTime;
+            })
 
             // Save the updated stats in localStorage
             this.saveRaceData();
@@ -59,11 +67,12 @@ class RaceStore {
 
 
     // Save race data to localStorage in the format you specified
-    saveRaceData() {
+    saveRaceData = () => {
         const raceDataToSave = {
             race: {
                 startTime: this.stats.race.startTime,
-                durationCovered: this.stats.race.durationCovered
+                durationCovered: this.stats.race.durationCovered,
+                duration: this.data.duration,
             }
         };
         console.log("=====saving====", raceDataToSave)
@@ -72,7 +81,7 @@ class RaceStore {
 
 
     // Load race data from localStorage if it exists
-    async loadRaceData() {
+    loadRaceData = async () => {
         try {
             const savedData = JSON.parse(await storageService.get(STORAGE_KEYS.RACE_DURATION_STATS));
             if (savedData && savedData.race) {
@@ -80,8 +89,10 @@ class RaceStore {
                 const elapsedSinceLastUpdate = currentTime - savedData.race.startTime;
 
                 // Restore race state
-                this.stats.race.startTime = savedData.race.startTime;
-                this.stats.race.durationCovered = savedData.race.durationCovered + elapsedSinceLastUpdate;
+                runInAction(() => {
+                    this.stats.race.startTime = savedData.race.startTime;
+                    this.stats.race.durationCovered = savedData.race.durationCovered + elapsedSinceLastUpdate;
+                })
 
                 // Optionally start the timer again to continue the race it trip started
                 if (this.stats.race.status === RACE_STATUS.STARTED) {
@@ -94,17 +105,22 @@ class RaceStore {
 
     }
     // Stop the timer when the race ends or app closes
-    stopRace() {
+    stopRace = () => {
         clearInterval(this.timerInterval);
+        runInAction(() => {
+            this.timerInterval=null;
+        })
         this.saveRaceData(); // Save one last time before stopping
     }
 
-    resetData() {
-        this.data = DEFAULT_RACE_DATA;
-        this.stats = DEFAULT_STATS_DATA;
-        this.timerInterval = null;
-        this.logs = [];
-        this.schedule = {};
+    resetData = () => {
+        runInAction(() => {
+            this.data = DEFAULT_RACE_DATA;
+            this.stats = DEFAULT_STATS_DATA;
+            this.timerInterval = null;
+            this.logs = [];
+            this.schedule = {};
+        })
         //TODO clear schedule also
     }
 
@@ -112,40 +128,50 @@ class RaceStore {
         if (!this.data.drivers.length && !add) return
         //TODO do calulation here
         //save time in hh:mm format or sime time format and will show in hh:mm format
-        if (add) {
-            this.data.drivers.push({ name: '', time: null })
-        } else {
-            this.data.drivers.pop()
-        }
+        runInAction(() => {
+            if (add) {
+                this.data.drivers.push({ name: '', time: null })
+            } else {
+                this.data.drivers.pop()
+            }
+        })
         this.debouncedCreateSchedule();
     }
 
     updateStops = (add = true) => {
         if (!this.data.stops.length && !add) return
         //TODO do calulation here
-        if (add) {
-            this.data.stops.push({ name: '', time: null, start: new Date() })
-        } else {
-            this.data.stops.pop()
-        }
+        runInAction(() => {
+            if (add) {
+                this.data.stops.push({ name: '', time: null, start: new Date() })
+            } else {
+                this.data.stops.pop()
+            }
+        })
         this.debouncedCreateSchedule();
     }
 
     //TODO add debounce here
     updateData = (key, value) => {
-        this.data[key] = value;
+        runInAction(() => {
+            this.data[key] = value;
+        })
         this.debouncedCreateSchedule();
     }
 
     updateStopsData = (index, key, value) => {
-        this.data.stops[index][key] = value;
+        runInAction(() => {
+            this.data.stops[index][key] = value;
+        })
         if (key !== 'name') { //if changing name then do not call it
             this.debouncedCreateSchedule();
         }
     }
 
     updateDriversData = (index, key, value) => {
-        this.data.drivers[index][key] = value;
+        runInAction(() => {
+            this.data.drivers[index][key] = value;
+        })
         if (key !== 'name') {
             this.debouncedCreateSchedule();
         }
