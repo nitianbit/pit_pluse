@@ -1,3 +1,4 @@
+import CloseIcon from "./CloseIcon";
 import FlagDotted from "./FlagDottedSvg";
 import FlagSvg from "./FlagSvg";
 import FuelIcon from "./Fuel";

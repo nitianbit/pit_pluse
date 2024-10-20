@@ -19,10 +19,6 @@ const RaceApp = () => {
   const [raceProgress, setRaceProgress] = useState(100);
   const [fuelProgress, setFuelProgress] = useState(60);
 
-  const startRace = () => {
-    setData(prev => ({ ...prev, status: RACE_STATUS.STARTED }));
-    //TODO add log here
-  };
 
 
 
@@ -63,11 +59,6 @@ const RaceApp = () => {
 
         }}
       />
-
-      {/* Start Race Button */}
-      {data?.status === RACE_STATUS.NOT_STARTED ? <TouchableOpacity style={styles.startButton} onPress={startRace}>
-        <Text style={styles.buttonText}>Start Race</Text>
-      </TouchableOpacity> : null}
       
       <GenerateLogs />
 
@@ -121,18 +112,7 @@ const styles = StyleSheet.create({
     color: '#FFF',
     marginBottom: 10,
   },
-  startButton: {
-    backgroundColor: '#4A90E2',
-    paddingVertical: 15,
-    paddingHorizontal: 50,
-    borderRadius: 8,
-    alignSelf: 'center',
-    marginBottom: 20,
-  },
-  buttonText: {
-    fontSize: 18,
-    color: '#FFF',
-  },
+
   participantRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
