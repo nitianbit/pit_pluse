@@ -4,6 +4,7 @@ import ThemeText from "./ThemeText";
 import ThemedInput from "./ThemedInput";
 import CenteredModal from "./CenteredModal";
 import GenerateLogs from "./GenerateLogs";
+import ProgressBar from "./ProgressBar";
 
 export {
     Layout,

@@ -7,14 +7,9 @@ import useTimer from '../../../hooks/useTimer';
 import { formatTime } from '../../../utils/helper';
 import { COLORS, RACE_STATUS } from '../../../utils/constants';
 import scheduleService from '../../../services/schedule';
+import ProgressBar from '../../../components/ProgressBar';
 
-const raceData = [
-  { id: '1', name: 'Rodrigo', time: '00:00:00' },
-  { id: '2', name: 'Shubham', time: '00:00:00' },
-  { id: '3', name: 'Tony', time: '00:00:00' },
-  { id: '4', name: 'Valentin', time: '00:00:00' },
-  { id: '5', name: 'Ben', time: '00:00:00' },
-];
+
 
 const RaceApp = () => {
   const { data, setData } = useAppContext();
@@ -23,98 +18,58 @@ const RaceApp = () => {
   const [fuelTime, setFuelTime] = useState('01:31:00');
   const [raceProgress, setRaceProgress] = useState(100);
   const [fuelProgress, setFuelProgress] = useState(60);
-  const stats=scheduleService.getCurrentDriverAndTimeLeft();
-
-  useEffect(() => {
-    if (data.status === RACE_STATUS.STARTED) {
-      resetTimer(data.duration * 60 * 60, data.durationCovered)
-    }
-    setRaceProgress(data.durationCovered / data.duration * 100);
-  }, [data.duration, data.durationCovered, data.status])
-
-  const percentageCompleted=()=>{
-    const tripDuration=data.duration*60*60; 
-    // const durationCovered=tripDuration-timeLeft;
-    return (timeLeft / tripDuration * 100);
-  }
-
-  const fuelDuration=(data)=>{
-    // scheduleService.getStats(data);
-    const fuelData=scheduleService.getRemainingRaceAndFuelTime();
-    return (fuelData.remainingFuelTime / fuelData.currentStintDuration * 100);
-  }
 
   const startRace = () => {
     setData(prev => ({ ...prev, status: RACE_STATUS.STARTED }));
     //TODO add log here
   };
 
-    // Function to calculate each driver's progress
-    const getDriverProgress = (index) => {
-      scheduleService.getStats(data);
-      const driverStats=scheduleService.getDriversAndTimeLeft();
-      if (!driverStats) return 0;
-      const driverData = driverStats?.drivers?.[index];
-      if(!driverData) return 0;
-      // return ((driverData.totalDrivingDuration - driverData.remainingTime) / driverData.totalDrivingDuration) * 100;
-      return {
-        progress:(( driverData.remainingTime) / driverData.totalDrivingDuration) * 100,
-        totalDuration: driverData.totalDrivingDuration,
-        remainingTime: driverData.remainingTime
-      };
-    };
-  
+
+
 
   return (
     <Layout style={styles.container}>
       {/* Race and Fuel Timers */}
       <View style={styles.timerContainer}>
-        {/* Race Timer with percentage fill */}
 
-        <View style={styles.timerBox}>
-          {/* <View style={[styles.fill, { width: `${raceProgress}%`, backgroundColor: '#4A90E2' }]} /> */}
-          <View style={[styles.fill, { width: `${percentageCompleted()}%`, backgroundColor: '#4A90E2' }]} />
-          <View style={styles.contentContainer}>
-            <FlagDotted />
-            {/* <Text style={styles.timerText}>{raceTime}</Text> */}
-            <Text style={styles.timerText}>{formatTime(timeLeft)}</Text>
-          </View>
-        </View>
+        {/* Progress Bar */}
+        <ProgressBar time={timeLeft} fillColor='#4A90E2' fillPercent='60' style={{marginBottom:20}} >
+          <FlagDotted />
+        </ProgressBar>
 
+        {/* Progress Bar */}
+        <ProgressBar time={timeLeft} fillColor='#FF5A5F' fillPercent='40' style={{marginBottom:20}} >
+          <FlagDotted />
+        </ProgressBar>
 
-        {/* Fuel Timer */}
-        <View style={styles.timerBox}>
-          <View style={[styles.fill, { width: `${fuelDuration(data)}%`, backgroundColor: '#FF5A5F' }]} />
-          <View style={styles.contentContainer}>
-            <FuelIcon />
-            <Text style={styles.timerText}>{formatTime(scheduleService.getRemainingRaceAndFuelTime().remainingFuelTime*60)}</Text>
-          </View>
-        </View>
       </View>
+
+
+
+      {/* Race Participants */}
+      <FlatList
+        // data={data?.drivers}
+        data={[...data?.drivers, { id: 'driver-1', name: 'Driver 1', time: 0 }]}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item, index }) => {
+
+          return (
+            <View key={index} style={[styles.participantRow, styles.selectedDriver]}>
+              <ProgressBar time={timeLeft} fillColor='#999' fillPercent='40' >
+                <Text style={styles.participantName}>{item.name}</Text>
+              </ProgressBar>
+            </View>
+          )
+
+        }}
+      />
 
       {/* Start Race Button */}
       {data?.status === RACE_STATUS.NOT_STARTED ? <TouchableOpacity style={styles.startButton} onPress={startRace}>
         <Text style={styles.buttonText}>Start Race</Text>
       </TouchableOpacity> : null}
-
-      {/* Race Participants */}
-      <FlatList
-        data={data?.drivers}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item,index }) => {
-          const {progress,totalDuration,remainingTime}=getDriverProgress(index);
-
-         return (<View key={index} style={[styles.participantRow, index===stats.currentDriver && styles.selectedDriver]}>
-            <View style={styles.driverRow}>
-            <Text style={styles.participantName}>{item.name}</Text>
-            <Text style={styles.participantTime}>{formatTime((remainingTime??0)*60)}</Text>
-            </View>
-            <View style={[styles.fill, { width: `${progress}%`, backgroundColor: '#999' }]} />
-          </View>)
-        }}
-      />
-
-      <GenerateLogs  />
+      
+      <GenerateLogs />
 
     </Layout>
   );
@@ -133,7 +88,7 @@ const styles = StyleSheet.create({
   },
   timerBox: {
     padding: 15,
-    paddingHorizontal:0,
+    paddingHorizontal: 0,
     borderRadius: 10,
     justifyContent: 'center',
     overflow: 'hidden', // Ensure the fill doesn't overflow outside the box
@@ -154,7 +109,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal:15
+    paddingHorizontal: 15
   },
   timerText: {
     fontSize: 24,
@@ -182,37 +137,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     backgroundColor: '#333',
-    borderRadius: 8,
-    marginVertical: 5,
+    borderRadius:10,
     overflow: 'hidden',
   },
   participantName: {
     color: '#FFF',
     fontSize: 18,
-    fontWeight:'bold'
+    fontWeight: 'bold',
+    width:'65%'
   },
-  participantTime: {
-    color: '#FFF',
-    fontSize: 18,
-    fontWeight:'bold'
+  selectedDriver: {
+    borderWidth: 2,
+    borderColor: '#4A90E2'
   },
-  raceLog: {
-    textAlign: 'center',
-    color: '#FFF',
-    fontSize: 18,
-    marginTop: 20,
-  },
-  selectedDriver:{
-    borderWidth:2,
-    borderColor:'#4A90E2'
-  },
-  driverRow:{
-    zIndex:999,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width:'100%',
-    padding:15,
-    borderRadius: 8,
-    marginVertical: 5,
-  }
 });
