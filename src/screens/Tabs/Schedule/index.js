@@ -1,52 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, ScrollView, StyleSheet } from 'react-native';
 import { Layout, ThemeText } from '../../../components';
-import { useAppContext } from '../../../services/AppContext';
-import scheduleService from '../../../services/schedule';
+ import scheduleService from '../../../services/schedule';
 import storageService from '../../../services/Storage';
 import { STORAGE_KEYS } from '../../../services/Storage/constants';
+import raceStore from '../../../store/RaceStore';
+import { observer } from 'mobx-react-lite';
+ 
 
-const raceData = [
-  { id: '1', name: 'Rodrigo', startTime: '13:00', endTime: '14:20', duration: '01:20', timeLeft: '22:40' },//here all time related fields will be in seconds and then will convert it into hh:mm
-  { id: '2', name: 'Shubham', startTime: '14:20', endTime: '15:40', duration: '01:20', timeLeft: '21:20' },
-  { id: '3', name: 'Tony', startTime: '15:40', endTime: '17:00', duration: '01:20', timeLeft: '20:00' },
-  { id: '4', name: 'Valentin', startTime: '17:00', endTime: '18:20', duration: '01:20', timeLeft: '18:40' },
-  { id: '5', name: 'Ben', startTime: '18:20', endTime: '19:40', duration: '01:20', timeLeft: '17:20' },
-];
+const Schedule = () => { 
+  const {schedule}=raceStore;
 
-const Schedule = () => {
-  const { data,setTripStats,setData } = useAppContext();
-  const [scheduleData, setScheDuleData] = useState([]);
-
-  //update trip here if not already present
-  const scheduleTrip = async () => {
-    try {
-      const trip = await storageService.get(STORAGE_KEYS.ACTIVE_RACE);
-      if (!trip && data) {
-        const res = scheduleService.getStats(data);
-        if (res) {
-          setScheDuleData(res.schedule);
-          console.log(res.schedule);
-          await storageService.saveKey(STORAGE_KEYS.ACTIVE_RACE, data);
-        }
-      } else {
-        const res = scheduleService.getStats(trip);
-        if (res) {
-          setScheDuleData(res.schedule);
-          // setTripStats(res);
-          // setData(trip);
-        } 
-      }
-    } catch (error) {
-
-    }
-  }
-
-
-  useEffect(() => {
-    scheduleTrip();
-    // setScheDuleData(scheduleService.getStats(data));
-  }, [data])
+ 
 
   const renderRow = ({ item, index }) => {
     const rowStyle = index % 2 === 0 ? styles.rowEven : styles.rowOdd;
@@ -80,7 +45,7 @@ const Schedule = () => {
           {/* Table Rows with Vertical Scroll */}
           <FlatList
             // data={raceData}
-            data={scheduleData}
+            data={schedule}
             bounces={false}
             renderItem={renderRow}
             keyExtractor={(item, index) => index.toString()}
@@ -93,7 +58,7 @@ const Schedule = () => {
   );
 };
 
-export default Schedule;
+export default observer(Schedule);
 
 const styles = StyleSheet.create({
   container: {

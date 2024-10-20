@@ -4,13 +4,13 @@ import { DIMENSIONS, FLAG_TYPE, RACE_STATUS } from '../../utils/constants'
 import scheduleService from '../../services/schedule'
 import { getDriverNameUsingIndex, getEvent } from '../../utils/helper'
 import moment from 'moment'
-import { useAppContext } from '../../services/AppContext'
 import CenteredModal from '../CenteredModal'
+import raceStore from '../../store/RaceStore'
 
 
 
 const GenerateLogs = () => {
-  const { data, setData } = useAppContext();
+  const { data } = raceStore;
   const [actionModal, setActionModal] = useState(false);
   const toggleActionModal = () => setActionModal(prev => !prev);
 
@@ -19,11 +19,7 @@ const GenerateLogs = () => {
     if (data.status !== RACE_STATUS.STARTED) {
       return Alert.alert("Race not started yet.");
     }
-    setData(prev => ({
-      ...prev, flags: {
-        [flagType]: true
-      }
-    }));
+ 
 
     switch (flagType) {
       case 'value':
@@ -44,24 +40,21 @@ const GenerateLogs = () => {
     const scheduleData = scheduleService.data;
     const remainingData = scheduleService.getRemainingRaceAndFuelTime();
 
-    setData(prev => ({
-      ...prev, logs: [
-        ...(prev.logs || []),
-        {
-          currentDriver: getDriverNameUsingIndex(currentDriver.currentDriver, data.drivers),
-          timeLeftForRace: remainingData.remainingRaceTime,
-          timeLeftForFuel: remainingData.remainingFuelTime,
-          event: getEvent(data?.flags) || 'N/A',
-          currentTime: moment().unix()
-        }
-      ]
-    }));
+    // logs: [
+    //   ...(prev.logs || []),
+    //   {
+    //     currentDriver: getDriverNameUsingIndex(currentDriver.currentDriver, data.drivers),
+    //     timeLeftForRace: remainingData.remainingRaceTime,
+    //     timeLeftForFuel: remainingData.remainingFuelTime,
+    //     event: getEvent(data?.flags) || 'N/A',
+    //     currentTime: moment().unix()
+    //   }
+    // ]
 
   }
 
 
   const startRace = () => {
-    setData(prev => ({ ...prev, status: RACE_STATUS.STARTED }));
     //TODO add log here
   };
 

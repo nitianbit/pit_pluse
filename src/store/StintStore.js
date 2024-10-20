@@ -2,6 +2,7 @@ import { makeAutoObservable } from "mobx";
 import storageService from "../services/Storage";
 import { STORAGE_KEYS } from "../services/Storage/constants";
 import moment from "moment";
+import { RACE_STATUS } from "../utils/constants";
 
 class StintStore {
     currentStintDuration = 0;
@@ -51,7 +52,9 @@ class StintStore {
                 this.durationCovered = savedData.durationCovered + elapsedSinceLastUpdate;
                 this.currentDriver = savedData.currentDriver;
 
-                this.startStint(); // Restart the stint timer
+                if(this.stats.race.status===RACE_STATUS.STARTED){
+                    this.startStint(); // Restart the stint timer
+                }
             }
         } catch (error) {
 
@@ -62,6 +65,13 @@ class StintStore {
         clearInterval(this.timerInterval);
         this.saveStintData(); // Save one last time before stopping
     }
+
+    updateCurrentDriver=(driverId)=>{
+      this.currentDriver = driverId;
+      this.saveStintData(); 
+      //TODO save in localstorage
+    }
+
     resetData = () => {
         this.currentStintDuration = 0;
         this.durationCovered = 0;

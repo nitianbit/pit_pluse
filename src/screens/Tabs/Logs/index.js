@@ -2,13 +2,13 @@ import { SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { DIMENSIONS } from '../../../utils/constants'
 import { ThemeText } from '../../../components'
-import { useAppContext } from '../../../services/AppContext'
-import scheduleService from '../../../services/schedule'
+ import scheduleService from '../../../services/schedule'
 import moment from 'moment'
+import raceStore from '../../../store/RaceStore'
+import { observer } from 'mobx-react-lite'
 
 const Logs = () => {
-  const { data } = useAppContext();
-  const logs = data?.logs || [];
+ const {logs}= raceStore;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -42,7 +42,7 @@ const Logs = () => {
   );
 };
 
-export default Logs;
+export default observer(Logs);
 
 const styles = StyleSheet.create({
   container: {

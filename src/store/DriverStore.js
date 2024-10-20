@@ -4,6 +4,7 @@ import { STORAGE_KEYS } from "../services/Storage/constants";
 
 class DriverStore {
     driverStats = {}; // Example: { driverId: { totalDrivingDuration: seconds, durationCovered: seconds } }
+    timerInterval = null;
 
     constructor() {
         makeAutoObservable(this);
@@ -14,6 +15,7 @@ class DriverStore {
        
     }
 
+    //this function needs to call every second from the timer
     updateDriverStats(driverId, totalDrivingDuration, durationCovered) {
         if (!this.driverStats[driverId]) {
             this.driverStats[driverId] = { totalDrivingDuration: 0, durationCovered: 0 };
@@ -48,9 +50,8 @@ class DriverStore {
         this.timerInterval = setInterval(() => {
             // Update each driver's stats in the driverStats object
             for (const driverId in this.driverStats) {
-                this.driverStats[driverId].durationCovered += 1; // Increment covered duration by 1 second
-                // Additional logic to update totalDrivingDuration or other fields can go here
-            }
+                this.driverStats[driverId].durationCovered += 1; 
+             }
 
             this.saveDriverData(); // Save the updated driver data in localStorage
         }, 1000); // Update every second
@@ -59,6 +60,17 @@ class DriverStore {
     stopDriverStatsInterval() {
         clearInterval(this.timerInterval);
         this.saveDriverData(); // Save one last time before stopping
+    }
+
+    changeCurrentDriver(driverId) {
+        //fetch the new driver's already coveredDuratoin and duration he need to covered from localstorage
+        const totalDrivingDuration = this.driverStats[driverId].totalDrivingDuration;
+        const durationCovered = this.driverStats[driverId].durationCovered;
+        if(this.timerInterval){
+            this.stopDriverStatsInterval();
+        }
+        //TODO start new interval with new driverId
+        
     }
 
     resetData=()=>{

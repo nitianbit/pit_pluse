@@ -2,17 +2,18 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 import { GenerateLogs, Layout, ThemeText } from '../../../components';
 import { FlagDotted, FuelIcon } from '../../../assets/svgs';
-import { useAppContext } from '../../../services/AppContext';
-import useTimer from '../../../hooks/useTimer';
+ import useTimer from '../../../hooks/useTimer';
 import { formatTime } from '../../../utils/helper';
 import { COLORS, RACE_STATUS } from '../../../utils/constants';
 import scheduleService from '../../../services/schedule';
 import ProgressBar from '../../../components/ProgressBar';
+import raceStore from '../../../store/RaceStore';
+import { observer } from 'mobx-react-lite';
 
 
 
 const RaceApp = () => {
-  const { data, setData } = useAppContext();
+  const { data } = raceStore;
   const { seconds, startTimer, pauseTimer, resetTimer, timeLeft } = {} = useTimer(data.duration * 60 * 60, data.durationCovered);
   const [raceTime, setRaceTime] = useState('24:00:00');
   const [fuelTime, setFuelTime] = useState('01:31:00');
@@ -66,7 +67,7 @@ const RaceApp = () => {
   );
 };
 
-export default RaceApp;
+export default observer(RaceApp);
 
 const styles = StyleSheet.create({
   container: {

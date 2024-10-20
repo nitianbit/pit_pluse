@@ -9,9 +9,9 @@ import { COLORS, MODAL_TYPE } from '../../../utils/constants';
 import { convertMinutesToHoursAndMinutes } from '../../../utils/helper';
 import CounterButton from '../../../components/CounterButton';
 import { ResetSvg } from '../../../assets/svgs';
-import { useAppContext } from '../../../services/AppContext';
-import scheduleService, { getSchedule } from '../../../services/schedule';
 import storageService from '../../../services/Storage';
+import raceStore from '../../../store/RaceStore';
+import { observer } from 'mobx-react-lite';
 
 
 
@@ -23,7 +23,8 @@ const CardItem = ({ theme, children }) => (
 
 const Setup = () => {
   const theme = useThemeColor();
-  const { updateData, updateDrivers, updateStops, updateDriversData, updateStopsData, data, tripStats, resetData } = useAppContext();
+   const { data, stats } = raceStore;
+   console.log(stats)
 
   const [open, setOpen] = useState(false);
   const [modal, setModal] = useState({
@@ -40,7 +41,7 @@ const Setup = () => {
       //TODO maybe show loader here
       closeModal();
       storageService.clearAll();
-      resetData();
+      raceStore.resetData();
     } catch (error) {
       
     }
@@ -75,7 +76,7 @@ const Setup = () => {
                   value={data?.duration}
                   maximumValue={24}
                   step={1} //hour wise
-                  onSlidingComplete={(value) => updateData('duration', value[0])}
+                  onSlidingComplete={(value) => raceStore.updateData('duration', value[0])}
                   minimumTrackStyle={{ backgroundColor: COLORS.BOTTOM_ACTIVE_COLOR }}
                   maximumTrackStyle={{ backgroundColor: COLORS.PRIMARY }}
                   thumbTintColor={COLORS.LIGHT}
@@ -97,7 +98,7 @@ const Setup = () => {
                   maximumTrackStyle={{ backgroundColor: COLORS.PRIMARY }}
                   thumbTintColor={COLORS.LIGHT}
                   containerStyle={styles.slider}
-                  onValueChange={(value) => updateData('fuelDuration', Math.ceil(value[0] / 60))}
+                  onValueChange={(value) => raceStore.updateData('fuelDuration', Math.ceil(value[0] / 60))}
                 />
                 <ThemeText style={[styles.value]} text={data?.fuelDuration ? `${convertMinutesToHoursAndMinutes(data?.fuelDuration)}` : '0h 0m'} />
               </View>
@@ -111,8 +112,8 @@ const Setup = () => {
                 // onDecrement={() => updateData('numberOfDrivers', Math.max(0, data.numberOfDrivers - 1))}
                 // onIncrement={() => updateData('numberOfDrivers', data.numberOfDrivers + 1)}
                 value={`Number of Drivers: ${data?.drivers?.length}`}
-                onDecrement={() => updateDrivers(false)}
-                onIncrement={() => updateDrivers()}
+                onDecrement={() => raceStore.updateDrivers(false)}
+                onIncrement={() => raceStore.updateDrivers()}
               />
             </View>
           </CardItem>
@@ -121,8 +122,8 @@ const Setup = () => {
             <View style={styles.driverRow}>
               {data?.drivers?.map((item, index) => (
                 <View style={[styles.labelContainer, styles.items]} key={index}>
-                  <ThemedInput placeholder='Driver Name' style={styles.input} value={item?.name} onChangeText={(text) => updateDriversData(index, 'name', text)} />
-                  <ThemeText style={styles.label} text={convertMinutesToHoursAndMinutes(tripStats?.driverDurationList?.[index] ?? 0)} /* text={item?.time} */ />
+                  <ThemedInput placeholder='Driver Name' style={styles.input} value={item?.name} onChangeText={(text) => raceStore.updateDriversData(index, 'name', text)} />
+                  <ThemeText style={styles.label} text={convertMinutesToHoursAndMinutes(raceStore.schedule?.driverDurationList?.[index] ?? 0)} /* text={item?.time} */ />
                 </View>
               ))}
             </View>
@@ -135,8 +136,8 @@ const Setup = () => {
                 // onDecrement={() => updateData('numberOfServiceStops', Math.max(0, data.numberOfServiceStops - 1))}
                 // onIncrement={() => updateData('numberOfServiceStops', data.numberOfServiceStops + 1)}
                 value={`Number of Service Stops: ${data?.stops?.length}`}
-                onDecrement={() => updateStops(false)}
-                onIncrement={() => updateStops()}
+                onDecrement={() => raceStore.updateStops(false)}
+                onIncrement={() => raceStore.updateStops()}
               />
             </View>
           </CardItem>
@@ -146,9 +147,9 @@ const Setup = () => {
               {data?.stops?.map((item, index) => (
                 <View style={[styles.labelContainer, styles.items]} key={index}>
                   {/* <ThemeText key={index} style={styles.label} text={item?.name} /> */}
-                  <ThemedInput placeholder='Stop Name' style={styles.input} value={item?.name} onChangeText={(text) => updateStopsData(index, 'name', text)} />
+                  <ThemedInput placeholder='Stop Name' style={styles.input} value={item?.name} onChangeText={(text) => raceStore.updateStopsData(index, 'name', text)} />
                   <Button title={moment(item?.start).format('HH:mm')} onPress={() => openModal(MODAL_TYPE.SERVICE_STOP_TIME, true, index)} />
-                  <ThemedInput placeholder='Duration (min)' keyboardType='numeric' style={styles.input} value={item?.duration ?? ""} onChangeText={(text) => updateStopsData(index, 'duration', text)} />
+                  <ThemedInput placeholder='Duration (min)' keyboardType='numeric' style={styles.input} value={item?.duration ?? ""} onChangeText={(text) => raceStore.updateStopsData(index, 'duration', text)} />
                   <ThemeText key={index} style={styles.label} text={item?.time} />
                 </View>
               ))}
@@ -162,10 +163,10 @@ const Setup = () => {
         <Card>
           <View style={styles.stintAnalysis}>
             <View style={styles.stintItem}>
-              <ThemeText color={COLORS.DARK} style={styles.stintText} text={`Qty of Stints: ${tripStats?.totalStints ? tripStats?.totalStints : 'Not available'}`} />
+              <ThemeText color={COLORS.DARK} style={styles.stintText} text={`Qty of Stints: ${raceStore.schedule?.totalStints ? raceStore.schedule?.totalStints : 'Not available'}`} />
             </View>
             <View style={styles.stintItem}>
-              <ThemeText color={COLORS.DARK} style={styles.stintText} text={`Avg Stint Duration: ${tripStats?.avgStintDuration ? parseFloat(tripStats?.avgStintDuration).toFixed(2) : 'Not available'}`} />
+              <ThemeText color={COLORS.DARK} style={styles.stintText} text={`Avg Stint Duration: ${raceStore.schedule?.avgStintDuration ? parseFloat(raceStore.schedule?.avgStintDuration).toFixed(2) : 'Not available'}`} />
             </View>
           </View>
         </Card>
@@ -180,7 +181,7 @@ const Setup = () => {
         date={data?.date}
         onConfirm={(date) => {
           setOpen(false)
-          updateData('date', date)
+          raceStore.updateData('date', date)
         }}
         onCancel={() => {
           setOpen(false)
@@ -194,7 +195,7 @@ const Setup = () => {
         date={data?.stops?.[modal.index]?.start}
         onConfirm={(date) => {
           closeModal();
-          updateStopsData(modal.index, 'start', date)
+          raceStore.updateStopsData(modal.index, 'start', date)
         }}
         onCancel={() => {
           closeModal();
@@ -340,4 +341,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default Setup;
+export default observer(Setup);

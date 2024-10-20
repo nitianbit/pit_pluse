@@ -100,7 +100,8 @@ export const DEFAULT_STATS_DATA= {
   race: {
       startTime: 0,
       duration: 0,//total tripDuration
-      durationCovered: 0
+      durationCovered: 0,
+      status: RACE_STATUS.NOT_STARTED,
   },
 
   flag: {
