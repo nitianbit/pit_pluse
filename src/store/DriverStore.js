@@ -1,4 +1,4 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, runInAction } from "mobx";
 import storageService from "../services/Storage";
 import { STORAGE_KEYS } from "../services/Storage/constants";
 
@@ -10,31 +10,36 @@ class DriverStore {
         makeAutoObservable(this);
         this.loadDriverData(); // Load driver data from localStorage if it exists
     }
-    initlizeDriverStats() {
+    initlizeDriverStats(drivers) {
       //TODO when race starts loop through drivers and assign in the form of { driverId: { totalDrivingDuration: seconds, durationCovered: seconds } }
-       
+       console.log(drivers);
     }
 
     //this function needs to call every second from the timer
     updateDriverStats=(driverId, totalDrivingDuration, durationCovered)=> {
-        if (!this.driverStats[driverId]) {
-            this.driverStats[driverId] = { totalDrivingDuration: 0, durationCovered: 0 };
-        }
-        this.driverStats[driverId].totalDrivingDuration += totalDrivingDuration;
-        this.driverStats[driverId].durationCovered += durationCovered;
-
-        this.saveDriverData(); // Save changes to localStorage
+        runInAction(() => {
+            if (!this.driverStats[driverId]) {
+                this.driverStats[driverId] = { totalDrivingDuration: 0, durationCovered: 0 };
+            }
+            this.driverStats[driverId].totalDrivingDuration += totalDrivingDuration;
+            this.driverStats[driverId].durationCovered += durationCovered;
+    
+            this.saveDriverData(); // Save changes to localStorage
+        })
     }
 
     saveDriverData=()=> {
-        storageService.saveKey(STORAGE_KEYS.DRIVER_STATS, JSON.stringify(this.driverStats));
+        // storageService.saveKey(STORAGE_KEYS.DRIVER_STATS, JSON.stringify(this.driverStats));
     }
 
       loadDriverData=async()=> {
         try {
             const savedData = JSON.parse(await storageService.get(STORAGE_KEYS.DRIVER_STATS));
             if (savedData) {
-                this.driverStats = savedData; // Restore driver stats from saved data
+                runInAction(() => {
+                    this.driverStats = savedData; // Restore driver stats from saved data
+                })
+                this.startDriverStatsInterval();
             }
         } catch (error) {
 
@@ -50,7 +55,9 @@ class DriverStore {
         this.timerInterval = setInterval(() => {
             // Update each driver's stats in the driverStats object
             for (const driverId in this.driverStats) {
-                this.driverStats[driverId].durationCovered += 1; 
+                runInAction(() => {
+                    this.driverStats[driverId].durationCovered += 1; 
+                })
              }
 
             this.saveDriverData(); // Save the updated driver data in localStorage
@@ -59,6 +66,9 @@ class DriverStore {
 
     stopDriverStatsInterval=()=> {
         clearInterval(this.timerInterval);
+        runInAction(() => {
+            this.timerInterval = null;
+        })
         this.saveDriverData(); // Save one last time before stopping
     }
 
@@ -69,6 +79,7 @@ class DriverStore {
         if(this.timerInterval){
             this.stopDriverStatsInterval();
         }
+        this.startDriverStatsInterval();
         //TODO start new interval with new driverId
         
     }

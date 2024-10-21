@@ -114,6 +114,11 @@ export const DEFAULT_STATS_DATA= {
       durationCovered: 0,
       currentDriver:null,
   },
+  fuel: {
+      fuelDuration: 0,
+      durationCovered: 0,
+      startTime:null
+  },
 
   driverStats: {
       // [driverIndex]: {

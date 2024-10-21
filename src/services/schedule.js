@@ -401,6 +401,23 @@ class ScheduleService {
             currentStintDuration // Return current stint duration
         };
     }
+
+    getAvgStintDurationAndCurrentDriver() {
+        if (!this.data.schedule) {
+            return {
+                avgStintDuration: 0,
+                currentDriver: null
+            };
+        }
+
+        const avgStintDuration = this.data.avgStintDuration || 0;
+        const { currentDriver } = this.getCurrentDriverAndTimeLeft();
+
+        return {
+            avgStintDuration,
+            currentDriver
+        };
+    }
     
 
       

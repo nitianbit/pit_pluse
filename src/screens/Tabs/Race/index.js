@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
-import { GenerateLogs, Layout, ThemeText } from '../../../components';
+import { FuelTimer, GenerateLogs, Layout, RaceTimer, ThemeText } from '../../../components';
 import { FlagDotted, FuelIcon } from '../../../assets/svgs';
 import useTimer from '../../../hooks/useTimer';
 import { formatTime } from '../../../utils/helper';
@@ -9,29 +9,21 @@ import scheduleService from '../../../services/schedule';
 import ProgressBar from '../../../components/ProgressBar';
 import raceStore from '../../../store/RaceStore';
 import { observer } from 'mobx-react-lite';
+import stintStore from '../../../store/StintStore';
 
 
 
 const RaceApp = () => {
-  const { data, stats } = raceStore;
-  const { duration, durationCovered } =( stats?.race ?? {});
+  const { data } = raceStore;
 
-
-
+ 
   return (
     <Layout style={styles.container}>
       {/* Race and Fuel Timers */}
       <View style={styles.timerContainer}>
 
-        {/* Progress Bar */}
-        <ProgressBar time={duration-durationCovered} fillColor='#4A90E2' fillPercent={((duration-durationCovered)/duration)*100} style={{ marginBottom: 20 }} >
-          <FlagDotted />
-        </ProgressBar>
-
-        {/* Progress Bar */}
-        <ProgressBar time={0} fillColor='#FF5A5F' fillPercent='40' style={{ marginBottom: 20 }} >
-          <FlagDotted />
-        </ProgressBar>
+       <RaceTimer />
+       <FuelTimer />
 
       </View>
 

@@ -1,8 +1,10 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, runInAction } from "mobx";
 import storageService from "../services/Storage";
 import { STORAGE_KEYS } from "../services/Storage/constants";
 import moment from "moment";
 import { RACE_STATUS } from "../utils/constants";
+import raceStore from "./RaceStore";
+import scheduleService from "../services/schedule";
 
 class StintStore {
     currentStintDuration = 0;
@@ -20,12 +22,37 @@ class StintStore {
         if (this.timerInterval) {
             this.stopStint();
         }
-        const currentTime = moment().unix();
-        this.startTime = currentTime;
+        
+        //update
+        const { avgStintDuration, currentDriver } = scheduleService.getAvgStintDurationAndCurrentDriver();
+          if(![null,undefined].includes(currentDriver)){
+             runInAction(() => {
+                 this.currentDriver = currentDriver;
+                 this.currentStintDuration = avgStintDuration; //it will be fuelDuration
+             })
+         }
+         
+          if(![null,undefined].includes(currentDriver)){
+             runInAction(() => {
+                 this.currentDriver = currentDriver;
+                 this.currentStintDuration = avgStintDuration; //it will be fuelDuration
+             })
+         }
+        
 
+        const currentTime = moment().unix();
+        
+        //if no startTime then set startTime else in case of reload or app open will use the last saved startTime (already done in loadStintData)
+        if(!this.startTime) {
+            runInAction(() => {
+                this.startTime = currentTime;
+            })
+        }
         this.timerInterval = setInterval(() => {
             const elapsedTime = moment().unix() - this.startTime;
-            this.durationCovered = elapsedTime;
+            runInAction(() => {
+                this.durationCovered = elapsedTime;
+            })
 
             this.saveStintData();
         }, 1000); // Update every second
@@ -38,7 +65,7 @@ class StintStore {
             durationCovered: this.durationCovered,
             currentDriver: this.currentDriver,
         };
-        storageService.saveKey(STORAGE_KEYS.STINT_DATA, JSON.stringify(stintDataToSave));
+        // storageService.saveKey(STORAGE_KEYS.STINT_STATS, JSON.stringify(stintDataToSave));
     }
 
      loadStintData=async()=> {
@@ -47,10 +74,15 @@ class StintStore {
             if (savedData) {
                 const currentTime = moment().unix();
                 const elapsedSinceLastUpdate = currentTime - savedData.startTime;//stint startTime
+               
+                //set State data from local storage
+                runInAction(() => {
+                    this.currentStintDuration = savedData.currentStintDuration;
+                    this.durationCovered = savedData.durationCovered + elapsedSinceLastUpdate;
+                    this.currentDriver = savedData.currentDriver;
+                    this.startTime = savedData.startTime;
+                })
 
-                this.currentStintDuration = savedData.currentStintDuration;
-                this.durationCovered = savedData.durationCovered + elapsedSinceLastUpdate;
-                this.currentDriver = savedData.currentDriver;
 
                 if(this.stats.race.status===RACE_STATUS.STARTED){
                     this.startStint(); // Restart the stint timer
@@ -63,21 +95,29 @@ class StintStore {
 
     stopStint=()=> {
         clearInterval(this.timerInterval);
+        runInAction(() => {
+            this.timerInterval = null;
+        })
         this.saveStintData(); // Save one last time before stopping
     }
 
+    //this method is only to store currentDriver in state and localstorage
     updateCurrentDriver=(driverId)=>{
-      this.currentDriver = driverId;
-      this.saveStintData(); 
+        runInAction(() => {
+            this.currentDriver = driverId;
+        })
+        this.saveStintData(); 
       //TODO save in localstorage
     }
 
     resetData = () => {
-        this.currentStintDuration = 0;
-        this.durationCovered = 0;
-        this.currentDriver = null;
-        this.timerInterval = null;
-        this.startTime = null;
+        runInAction(() => {
+            this.currentStintDuration = 0;
+            this.durationCovered = 0;
+            this.currentDriver = null;
+            this.timerInterval = null;
+            this.startTime = null;
+        })
     }
 }
 
