@@ -19,8 +19,7 @@ const FuelTimer = () => {
     }
 
     const { filledPercentage, remainingTime } = getFilledValue();
-    console.log({durationCovered, fuelDuration, filledPercentage, remainingTime});
-
+ 
     return (
         <>
             <ProgressBar time={remainingTime} fillColor='#FF5A5F' fillPercent={filledPercentage} style={{ marginBottom: 20 }} >
