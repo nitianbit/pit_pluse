@@ -43,6 +43,9 @@ class RaceStore {
         if (this.timerInterval) {
             this.stopRace();
         }
+
+        this.debouncedCreateSchedule();
+
         let currentTime = moment().unix();
         runInAction(() => {
             this.stats.race.startTime = this.stats.race.startTime || currentTime; // Set if not already set
@@ -72,7 +75,7 @@ class RaceStore {
             race: {
                 startTime: this.stats.race.startTime,
                 durationCovered: this.stats.race.durationCovered,
-                duration: this.data.duration,
+                duration: this.data.duration,//this will be in hours
             }
         };
         console.log("=====saving====", raceDataToSave)
@@ -97,6 +100,7 @@ class RaceStore {
                 // Optionally start the timer again to continue the race it trip started
                 if (this.stats.race.status === RACE_STATUS.STARTED) {
                     this.startRace();
+                    this.debouncedCreateSchedule();//create schedule
                 }
             }
         } catch (error) {
@@ -182,8 +186,10 @@ class RaceStore {
         if (drivers.length && startTime && duration) {
             //TODO use stops
 
-            const res = scheduleService.getStats(this.data);
-            console.log(res)
+            const scheduleData = scheduleService.getStats(this.data);
+            runInAction(() => {
+                this.schedule = scheduleData;
+            })
             //TODO save in local storage the original data and calculate this data from there
         }
     }
