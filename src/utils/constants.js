@@ -68,6 +68,8 @@ export const FLAG_TYPE={
   RED_FLAG:'redFlag',
   BLACK_FLAG:'blackFlag',
   GREEN_FLAG:'greenFlag',
+  REFUEL:'Refuel',
+  DRIVER_CHANGE:'Driver Change',
 }
 
 export const getFlagTypeString=(flagType)=>{

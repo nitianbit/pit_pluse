@@ -7,6 +7,8 @@ import scheduleService from "../services/schedule";
 import stintStore from "./StintStore";
 import driverStore from "./DriverStore";
 import fuelStore from "./FuelStore";
+import { getDriverNameUsingIndex, getEvent } from "../utils/helper";
+import { Alert } from "react-native";
 
 // Debounce function
 function debounce(func, delay) {
@@ -29,6 +31,7 @@ class RaceStore {
     schedule = {};//store the schedule
     logs = [];//populate from localstorage
     timerInterval = null;
+    flags = DEFAULT_STATS_DATA.flag;
 
 
     constructor() {
@@ -41,9 +44,9 @@ class RaceStore {
     }
 
     // Start the race timer
-    startRace = (manually = false) => { 
+    startRace = (manually = false) => {
         //manually will be true when we start manually from UI and false when start from localstorage ie when app killed or in backgorund and in that case use the startTime else update from the data
-        
+
         //cancel previous timer if any
         if (this.timerInterval) {
             this.stopRace();
@@ -62,15 +65,14 @@ class RaceStore {
         driverStore.initlizeDriverStats(this.data.drivers);
         //TODO set totalDrivingDuration for each driver
         //set currentDriver and startDriverTimer
-        const {currentDriver } = scheduleService.getAvgStintDurationAndCurrentDriver();
-        console.log("currentDriver",currentDriver);
+        const { currentDriver } = scheduleService.getAvgStintDurationAndCurrentDriver();
+        console.log("currentDriver", currentDriver);
         driverStore.changeCurrentDriver(currentDriver);
 
 
         let currentTime = moment().unix();
         runInAction(() => {
-            console.log("====",this.raceStats)
-            const raceStartTime = (manually || !this.raceStats.startTime) ? currentTime : this.raceStats.startTime;
+             const raceStartTime = (manually || !this.raceStats.startTime) ? currentTime : this.raceStats.startTime;
 
             // this.raceStats.startTime = this.raceStats.startTime || currentTime; // Set if not already set
             this.raceStats.startTime = raceStartTime; // Set if not already set
@@ -81,8 +83,7 @@ class RaceStore {
         this.timerInterval = setInterval(() => {
             currentTime = moment().unix();
             const elapsedTime = currentTime - this.raceStats.startTime;
-            console.log("race timer running....", { elapsedTime, currentTime });
-
+ 
             runInAction(() => {
                 this.raceStats.durationCovered = elapsedTime;
             })
@@ -90,6 +91,11 @@ class RaceStore {
             // Save the updated stats in localStorage
             this.saveRaceData();
         }, 1000); // update every second
+
+        runInAction(() => {
+            this.raceStats.status = RACE_STATUS.STARTED;
+            console.log("starting race....",this.raceStats.status)
+        })
 
     }
 
@@ -139,7 +145,7 @@ class RaceStore {
     stopRace = () => {
         clearInterval(this.timerInterval);
         runInAction(() => {
-            this.timerInterval=null;
+            this.timerInterval = null;
         })
         this.saveRaceData(); // Save one last time before stopping
     }
@@ -220,6 +226,51 @@ class RaceStore {
             return this.schedule;
             //TODO save in local storage the original data and calculate this data from there
         }
+    }
+
+    // Load logs data from localStorage if it exists
+    loadRaceData = async () => {
+        try {
+            const savedData = JSON.parse(await storageService.get(STORAGE_KEYS.RACE_LOGS));
+            if (savedData && savedData.logs) {
+                // Restore race state
+                runInAction(() => {
+                    this.logs = savedData.logs;
+                })
+            }
+        } catch (error) {
+
+        }
+    }
+
+    saveRaceData = async () => {
+        try {
+            const jsonValue = JSON.stringify({ logs: this.logs });
+            await storageService.saveKey(STORAGE_KEYS.RACE_LOGS, jsonValue);
+        } catch (error) {
+
+        }
+    }
+
+    generateLogs = (event = null) => {
+        if (this.raceStats.status !== RACE_STATUS.STARTED) {
+            return Alert.alert("Race not started yet.");
+        }
+        const currentDriver = driverStore.driverStats.currentDriver;
+
+        const { duration, durationCovered } = this.raceStats;
+        const timeLeftForRace = duration - durationCovered;
+
+        const { durationCovered: fuelDurationCovered, fuelDuration } = fuelStore.fuelStats;
+        const timeLeftForFuel = fuelDuration - fuelDurationCovered;
+
+        this.logs.push({
+            currentDriver: getDriverNameUsingIndex(currentDriver, this.data.drivers),
+            timeLeftForRace,
+            timeLeftForFuel,
+            event: event || getEvent(this.flags) || 'N/A',
+            currentTime: moment().unix()
+        })
     }
 
 }

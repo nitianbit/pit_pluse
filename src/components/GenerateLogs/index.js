@@ -6,65 +6,48 @@ import { getDriverNameUsingIndex, getEvent } from '../../utils/helper'
 import moment from 'moment'
 import CenteredModal from '../CenteredModal'
 import raceStore from '../../store/RaceStore'
+import { observer } from 'mobx-react-lite'
 
 
 
 const GenerateLogs = () => {
-  const { data ,stats} = raceStore;
+  const { data, raceStats } = raceStore;
   const [actionModal, setActionModal] = useState(false);
   const toggleActionModal = () => setActionModal(prev => !prev);
+  const { status } = raceStats;
 
 
   const raiseFlag = (flagType) => {
-    if (data.status !== RACE_STATUS.STARTED) {
-      return Alert.alert("Race not started yet.");
-    }
- 
-
     switch (flagType) {
-      case 'value':
-
-        break;
-
+      case FLAG_TYPE.BLACK_FLAG:
+        return raceStore.generateLogs();
+      case FLAG_TYPE.REFUEL:
+        return raceStore.generateLogs(FLAG_TYPE.REFUEL);
+      case FLAG_TYPE.DRIVER_CHANGE:
+        return raceStore.generateLogs(FLAG_TYPE.DRIVER_CHANGE);
       default:
-        break;
+        return null;
     }
 
   }
 
-  const generateLogs = () => {
-    if (data.status !== RACE_STATUS.STARTED) {
-      return Alert.alert("Race not started yet.");
-    }
-    const currentDriver = scheduleService.getCurrentDriverAndTimeLeft()
-    const scheduleData = scheduleService.data;
-    const remainingData = scheduleService.getRemainingRaceAndFuelTime();
 
-    // logs: [
-    //   ...(prev.logs || []),
-    //   {
-    //     currentDriver: getDriverNameUsingIndex(currentDriver.currentDriver, data.drivers),
-    //     timeLeftForRace: remainingData.remainingRaceTime,
-    //     timeLeftForFuel: remainingData.remainingFuelTime,
-    //     event: getEvent(data?.flags) || 'N/A',
-    //     currentTime: moment().unix()
-    //   }
-    // ]
-
-  }
 
 
 
   return (
     <>
       {/* Start Race Button */}
-      {!data.status ||data?.status == RACE_STATUS.NOT_STARTED ? <TouchableOpacity style={styles.startButton} onPress={()=>raceStore.startRace(true)}>
-        <Text style={styles.buttonText}>Start Race</Text>
-      </TouchableOpacity> : null}
+      <View style={styles.lowerBtns}>
+        {!status || status == RACE_STATUS.NOT_STARTED ? <TouchableOpacity style={styles.startButton} onPress={() => raceStore.startRace(true)}>
+          <Text style={styles.buttonText}>Start Race</Text>
+        </TouchableOpacity> : null}
 
-      {<TouchableOpacity style={styles.startButton} onPress={toggleActionModal}>
-        <Text style={styles.buttonText}>Take Action</Text>
-      </TouchableOpacity>}
+        {<TouchableOpacity style={styles.startButton} onPress={toggleActionModal}>
+          <Text style={styles.buttonText}>Take Action</Text>
+        </TouchableOpacity>}
+      </View>
+
       <TouchableOpacity style={[styles.startButton, { backgroundColor: '#4A9' }]} onPress={() => raiseFlag(FLAG_TYPE.GREEN_FLAG)} >
         <Text style={styles.buttonText}>Green Flag</Text>
       </TouchableOpacity>
@@ -77,10 +60,10 @@ const GenerateLogs = () => {
           <TouchableOpacity style={[styles.startButton, { backgroundColor: '#FF5A5F' }]} onPress={() => raiseFlag(FLAG_TYPE.RED_FLAG)}>
             <Text style={styles.buttonText}>Red Flag</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.startButton, { backgroundColor: '#FF5A5F' }]} onPress={() => raiseFlag(FLAG_TYPE.RED_FLAG)}>
+          <TouchableOpacity style={[styles.startButton, { backgroundColor: '#000', borderWidth: 1, borderColor: '#999' }]} onPress={() => raiseFlag(FLAG_TYPE.RED_FLAG)}>
             <Text style={styles.buttonText}>Refuel</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.startButton, { backgroundColor: '#FF5A5F' }]} onPress={() => raiseFlag(FLAG_TYPE.RED_FLAG)}>
+          <TouchableOpacity style={[styles.startButton, { backgroundColor: '#000', borderWidth: 1, borderColor: '#999' }]} onPress={() => raiseFlag(FLAG_TYPE.RED_FLAG)}>
             <Text style={styles.buttonText}>Change Driver</Text>
           </TouchableOpacity>
         </View>
@@ -90,7 +73,7 @@ const GenerateLogs = () => {
   )
 }
 
-export default GenerateLogs
+export default observer(GenerateLogs);
 
 const styles = StyleSheet.create({
   startButton: {
@@ -122,6 +105,14 @@ const styles = StyleSheet.create({
     borderBottomColor: '#999',
     borderBottomWidth: 1
   },
+  lowerBtns: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    gap: 10
+  }
 
 
 })

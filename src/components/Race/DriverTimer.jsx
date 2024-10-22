@@ -21,8 +21,7 @@ const DriverTimer = (props) => {
     }
 
     const { filledPercentage, remainingTime } = getFilledValue(); 
-    console.log({ filledPercentage, remainingTime })
-
+ 
 
     return (
         <View style={[styles.participantRow, driverId===currentDriver && styles.selectedDriver]}>
