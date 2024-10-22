@@ -7,27 +7,54 @@ import moment from 'moment'
 import CenteredModal from '../CenteredModal'
 import raceStore from '../../store/RaceStore'
 import { observer } from 'mobx-react-lite'
+import driverStore from '../../store/DriverStore'
+import fuelStore from '../../store/FuelStore'
+import { showMessage } from 'react-native-flash-message'
 
 
 
 const GenerateLogs = () => {
-  const { data, raceStats } = raceStore;
+  const { data, raceStats ,flags} = raceStore;
   const [actionModal, setActionModal] = useState(false);
   const toggleActionModal = () => setActionModal(prev => !prev);
   const { status } = raceStats;
 
 
   const raiseFlag = (flagType) => {
+        //show success message
+        showMessage({
+          message: 'Flag Raised',
+          type: 'success',
+      })
     switch (flagType) {
       case FLAG_TYPE.BLACK_FLAG:
+        toggleActionModal();
         return raceStore.generateLogs();
+
       case FLAG_TYPE.REFUEL:
+        toggleActionModal();
         return raceStore.generateLogs(FLAG_TYPE.REFUEL);
+
       case FLAG_TYPE.DRIVER_CHANGE:
+        toggleActionModal();
         return raceStore.generateLogs(FLAG_TYPE.DRIVER_CHANGE);
+
+      case FLAG_TYPE.RED_FLAG:
+        driverStore.stopDriverStatsInterval();
+        fuelStore.stopFuelTimer();
+        toggleActionModal();
+        return raceStore.generateLogs(FLAG_TYPE.RED_FLAG);
+        
+      case FLAG_TYPE.GREEN_FLAG:
+        driverStore.startDriverStatsInterval();
+        fuelStore.startFuelTimer();
+        return raceStore.generateLogs(FLAG_TYPE.GREEN_FLAG);
+
       default:
         return null;
     }
+
+    
 
   }
 
@@ -43,14 +70,17 @@ const GenerateLogs = () => {
           <Text style={styles.buttonText}>Start Race</Text>
         </TouchableOpacity> : null}
 
-        {<TouchableOpacity style={styles.startButton} onPress={toggleActionModal}>
-          <Text style={styles.buttonText}>Take Action</Text>
-        </TouchableOpacity>}
-      </View>
+        {!flags.redFlag
+          ?
+          <TouchableOpacity style={styles.startButton} onPress={toggleActionModal}>
+            <Text style={styles.buttonText}>Take Action</Text>
+          </TouchableOpacity>
 
-      <TouchableOpacity style={[styles.startButton, { backgroundColor: '#4A9' }]} onPress={() => raiseFlag(FLAG_TYPE.GREEN_FLAG)} >
-        <Text style={styles.buttonText}>Green Flag</Text>
-      </TouchableOpacity>
+          : <TouchableOpacity style={[styles.startButton, { backgroundColor: '#4A9' }]} onPress={() => raiseFlag(FLAG_TYPE.GREEN_FLAG)} >
+            <Text style={styles.buttonText}>Green Flag</Text>
+          </TouchableOpacity>
+        }
+      </View>
 
       <CenteredModal visible={actionModal} animationType='slide' transparent={true} onClose={toggleActionModal}>
         <View style={styles.btns}>

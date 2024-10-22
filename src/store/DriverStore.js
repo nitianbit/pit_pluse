@@ -21,7 +21,7 @@ class DriverStore {
             runInAction(() => {
                 this.driverStats.stats[i] = { 
                     totalDrivingDuration: (scheduleService.data.driverDurationList[i]??0)*60, 
-                    durationCovered: 0
+                    durationCovered: this.driverStats.stats[i]?.durationCovered??0
                  };
             })
         }

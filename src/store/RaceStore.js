@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { DEFAULT_STATS_DATA, DEFAULT_RACE_DATA, RACE_STATUS } from "../utils/constants";
+import { DEFAULT_STATS_DATA, DEFAULT_RACE_DATA, RACE_STATUS, FLAG_TYPE } from "../utils/constants";
 import storageService from "../services/Storage";
 import { STORAGE_KEYS } from "../services/Storage/constants";
 import moment, { duration } from "moment";
@@ -43,15 +43,7 @@ class RaceStore {
 
     }
 
-    // Start the race timer
-    startRace = (manually = false) => {
-        //manually will be true when we start manually from UI and false when start from localstorage ie when app killed or in backgorund and in that case use the startTime else update from the data
-
-        //cancel previous timer if any
-        if (this.timerInterval) {
-            this.stopRace();
-        }
-
+    processInitialData = () => {
         //create schedule
         this.debouncedCreateSchedule();
 
@@ -68,11 +60,23 @@ class RaceStore {
         const { currentDriver } = scheduleService.getAvgStintDurationAndCurrentDriver();
         console.log("currentDriver", currentDriver);
         driverStore.changeCurrentDriver(currentDriver);
+    }
+
+    // Start the race timer
+    startRace = (manually = false) => {
+        //manually will be true when we start manually from UI and false when start from localstorage ie when app killed or in backgorund and in that case use the startTime else update from the data
+
+        //cancel previous timer if any
+        if (this.timerInterval) {
+            this.stopRace();
+        }
+
+        this.processInitialData();
 
 
         let currentTime = moment().unix();
         runInAction(() => {
-             const raceStartTime = (manually || !this.raceStats.startTime) ? currentTime : this.raceStats.startTime;
+            const raceStartTime = (manually || !this.raceStats.startTime) ? currentTime : this.raceStats.startTime;
 
             // this.raceStats.startTime = this.raceStats.startTime || currentTime; // Set if not already set
             this.raceStats.startTime = raceStartTime; // Set if not already set
@@ -83,7 +87,7 @@ class RaceStore {
         this.timerInterval = setInterval(() => {
             currentTime = moment().unix();
             const elapsedTime = currentTime - this.raceStats.startTime;
- 
+
             runInAction(() => {
                 this.raceStats.durationCovered = elapsedTime;
             })
@@ -94,7 +98,7 @@ class RaceStore {
 
         runInAction(() => {
             this.raceStats.status = RACE_STATUS.STARTED;
-            console.log("starting race....",this.raceStats.status)
+            console.log("starting race....", this.raceStats.status)
         })
 
     }
@@ -141,7 +145,7 @@ class RaceStore {
         }
 
     }
-    // Stop the timer when the race ends or app closes
+    // Stop the timer when the race ends or app closes or manually stopped
     stopRace = () => {
         clearInterval(this.timerInterval);
         runInAction(() => {
@@ -270,7 +274,14 @@ class RaceStore {
             timeLeftForFuel,
             event: event || getEvent(this.flags) || 'N/A',
             currentTime: moment().unix()
-        })
+        });
+
+        if (event === FLAG_TYPE.RED_FLAG) {
+            this.flags.redFlag = true;
+        }
+        if(event===FLAG_TYPE.GREEN_FLAG){
+            this.flags.redFlag = false;
+        }
     }
 
 }
