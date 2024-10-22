@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15
     },
     timerText: {
-        fontSize: 24,
+        fontSize: 20,
         color: '#FFF',
         fontWeight: 'bold',
     },

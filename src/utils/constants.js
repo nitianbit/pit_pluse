@@ -120,11 +120,15 @@ export const DEFAULT_STATS_DATA= {
       startTime:null
   },
 
-  driverStats: {
-      // [driverIndex]: {
+  driver: {
+      stats:{
+        // [driverIndex]: {
       //     totalDrivingDuration: seconds,
       //     durationCovered: seconds
       // }
+      },
+      currentDriver: null,
+      startTime:null
   },
   
   logs: []
