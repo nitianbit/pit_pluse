@@ -22,11 +22,10 @@ const DriverTimer = (props) => {
 
     const { filledPercentage, remainingTime } = getFilledValue();
 
-
     return (
         <View style={[styles.participantRow, driverId === currentDriver && styles.selectedDriver]}>
             <ProgressBar time={remainingTime} fillColor='#999' fillPercent={filledPercentage} >
-                <Text style={styles.participantName}>{driver.name}</Text>
+                <Text style={styles.participantName}>{driver.name?driver.name:`Driver ${driverId+1}`}</Text>
             </ProgressBar>
         </View>
     )

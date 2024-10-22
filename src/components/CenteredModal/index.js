@@ -4,7 +4,7 @@ import ThemeText from '../ThemeText';
 import useThemeColor from '../../hooks/useThemeColor';
 import CloseIcon from '../../assets/svgs/CloseIcon';
 
-const CenteredModal = ({ visible, onClose, children, title = "Select" }) => {
+const CenteredModal = ({ visible, onClose, children, title = "Select",bottom=false }) => {
   const theme = useThemeColor();
 
   return (
@@ -14,7 +14,7 @@ const CenteredModal = ({ visible, onClose, children, title = "Select" }) => {
       animationType="fade"
       onRequestClose={onClose}
     >
-      <View style={styles.modalContainer}>
+      <View style={[styles.modalContainer,{justifyContent:bottom?'flex-end':'center'}]}>
         <View style={[styles.modalContent, { backgroundColor: theme.background || 'white' }]}>
           <View style={styles.header}>
             {title ? <ThemeText style={[styles.title]} text={title} /> : null}

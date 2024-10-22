@@ -10,6 +10,7 @@ import { observer } from 'mobx-react-lite'
 import driverStore from '../../store/DriverStore'
 import fuelStore from '../../store/FuelStore'
 import { showMessage } from 'react-native-flash-message'
+import DriverChangePopup from '../DriverChangePopup'
 
 
 
@@ -18,36 +19,46 @@ const GenerateLogs = () => {
   const [actionModal, setActionModal] = useState(false);
   const toggleActionModal = () => setActionModal(prev => !prev);
   const { status } = raceStats;
+  const [changeDriverModal,setChangeDriverModel]=useState(false);
+  const toggleChangeDriverModal=()=>setChangeDriverModel(prev=>!prev);
+
+  const showSuccessMsg=()=>{
+            //show success message
+            showMessage({
+              message: 'Flag Raised',
+              type: 'success',
+          })
+  }
 
 
   const raiseFlag = (flagType) => {
-        //show success message
-        showMessage({
-          message: 'Flag Raised',
-          type: 'success',
-      })
     switch (flagType) {
       case FLAG_TYPE.BLACK_FLAG:
         toggleActionModal();
+        showSuccessMsg();
         return raceStore.generateLogs();
 
       case FLAG_TYPE.REFUEL:
         toggleActionModal();
+        showSuccessMsg();
         return raceStore.generateLogs(FLAG_TYPE.REFUEL);
 
       case FLAG_TYPE.DRIVER_CHANGE:
         toggleActionModal();
-        return raceStore.generateLogs(FLAG_TYPE.DRIVER_CHANGE);
+        // return raceStore.generateLogs(FLAG_TYPE.DRIVER_CHANGE);
+        return toggleChangeDriverModal();
 
       case FLAG_TYPE.RED_FLAG:
         driverStore.stopDriverStatsInterval();
         fuelStore.stopFuelTimer();
         toggleActionModal();
+        showSuccessMsg();
         return raceStore.generateLogs(FLAG_TYPE.RED_FLAG);
         
       case FLAG_TYPE.GREEN_FLAG:
         driverStore.startDriverStatsInterval();
         fuelStore.startFuelTimer();
+        showSuccessMsg();
         return raceStore.generateLogs(FLAG_TYPE.GREEN_FLAG);
 
       default:
@@ -90,14 +101,16 @@ const GenerateLogs = () => {
           <TouchableOpacity style={[styles.startButton, { backgroundColor: '#FF5A5F' }]} onPress={() => raiseFlag(FLAG_TYPE.RED_FLAG)}>
             <Text style={styles.buttonText}>Red Flag</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.startButton, { backgroundColor: '#000', borderWidth: 1, borderColor: '#999' }]} onPress={() => raiseFlag(FLAG_TYPE.RED_FLAG)}>
+          <TouchableOpacity style={[styles.startButton, { backgroundColor: '#000', borderWidth: 1, borderColor: '#999' }]} onPress={() => raiseFlag(FLAG_TYPE.REFUEL)}>
             <Text style={styles.buttonText}>Refuel</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.startButton, { backgroundColor: '#000', borderWidth: 1, borderColor: '#999' }]} onPress={() => raiseFlag(FLAG_TYPE.RED_FLAG)}>
+          <TouchableOpacity style={[styles.startButton, { backgroundColor: '#000', borderWidth: 1, borderColor: '#999' }]} onPress={() => raiseFlag(FLAG_TYPE.DRIVER_CHANGE)}>
             <Text style={styles.buttonText}>Change Driver</Text>
           </TouchableOpacity>
         </View>
       </CenteredModal>
+
+      <DriverChangePopup visible={changeDriverModal} toggleVisible={toggleChangeDriverModal} />
 
     </>
   )
