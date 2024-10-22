@@ -5,26 +5,26 @@ import driverStore from '../../store/DriverStore'
 import { observer } from 'mobx-react-lite'
 
 const DriverTimer = (props) => {
-    const {driver,driverId}=props;
+    const { driver, driverId } = props;
     const { driverStats } = driverStore;
-    const { currentDriver,stats } = driverStats;
+    const { currentDriver, stats } = driverStats;
 
     const getFilledValue = () => {
         const totalDuration = stats[driverId]?.totalDrivingDuration ?? 0;
         const filledValue = stats[driverId]?.durationCovered ?? 0;
-        const remainingTime=totalDuration - filledValue;
-       
+        const remainingTime = totalDuration - filledValue;
+
         return {
             filledPercentage: (remainingTime / totalDuration) * 100,
-            remainingTime:remainingTime>0?remainingTime:0
+            remainingTime: remainingTime > 0 ? remainingTime : 0
         };
     }
 
-    const { filledPercentage, remainingTime } = getFilledValue(); 
- 
+    const { filledPercentage, remainingTime } = getFilledValue();
+
 
     return (
-        <View style={[styles.participantRow, driverId===currentDriver && styles.selectedDriver]}>
+        <View style={[styles.participantRow, driverId === currentDriver && styles.selectedDriver]}>
             <ProgressBar time={remainingTime} fillColor='#999' fillPercent={filledPercentage} >
                 <Text style={styles.participantName}>{driver.name}</Text>
             </ProgressBar>
@@ -36,7 +36,7 @@ export default observer(DriverTimer);
 
 const styles = StyleSheet.create({
 
-    participantRow: { 
+    participantRow: {
         backgroundColor: '#333',
         borderRadius: 10,
         overflow: 'hidden',
@@ -49,7 +49,8 @@ const styles = StyleSheet.create({
         width: '65%'
     },
     selectedDriver: {
-        borderWidth: 2,
-        borderColor: '#28A745'
+        backgroundColor: '#28A745',
+        padding: 3,
+        borderRadius: 10,
     },
 })

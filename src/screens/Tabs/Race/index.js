@@ -27,7 +27,7 @@ const RaceApp = () => {
 
       </View>
 
-
+     <ThemeText text='Drivers' style={styles.title} />
 
       {/* Race Participants */}
       <FlatList
@@ -35,6 +35,7 @@ const RaceApp = () => {
         data={[...data?.drivers]}
         keyExtractor={(item,index) => index.toString()}
         renderItem={({ item, index }) => <DriverTimer key={index} driver={item} driverId={index} />}
+        bounces={false}
       />
 
       <GenerateLogs />
@@ -53,41 +54,12 @@ const styles = StyleSheet.create({
   },
   timerContainer: {
     marginBottom: 20,
-  },
-  timerBox: {
-    padding: 15,
-    paddingHorizontal: 0,
-    borderRadius: 10,
-    justifyContent: 'center',
-    overflow: 'hidden', // Ensure the fill doesn't overflow outside the box
-    backgroundColor: '#333', // Background for the timer box,
-    marginBottom: 20
-
-  },
-  fill: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    bottom: 0,
-  },
-  contentContainer: {
-    zIndex: 999, // Ensure text is above the fill
-    justifyContent: 'center',
-    alignItems: 'center',
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 15
-  },
-  timerText: {
+  }, 
+  title: {
     fontSize: 24,
-    color: '#FFF',
     fontWeight: 'bold',
-  },
-  icon: {
-    fontSize: 24,
-    color: '#FFF',
     marginBottom: 10,
+    textAlign:'center'
   },
 
 
