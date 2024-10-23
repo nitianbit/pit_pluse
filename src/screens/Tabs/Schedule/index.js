@@ -6,6 +6,7 @@ import storageService from '../../../services/Storage';
 import { STORAGE_KEYS } from '../../../services/Storage/constants';
 import raceStore from '../../../store/RaceStore';
 import { observer } from 'mobx-react-lite';
+import { DIMENSIONS } from '../../../utils/constants';
  
 
 const Schedule = () => { 
@@ -17,11 +18,11 @@ const Schedule = () => {
     const rowStyle = index % 2 === 0 ? styles.rowEven : styles.rowOdd;
 
     return (
-      <View style={[styles.row, rowStyle]}>
+      <View style={[styles.row, rowStyle,item?.stop && styles.stopRow]}>
         <Text style={styles.cell}>{item.name}</Text>
-        <Text style={styles.cell}>{(item.startDriveTime)}</Text>
-        <Text style={styles.cell}>{item.endDriveTime}</Text>
-        <Text style={styles.cell}>{scheduleService.minutesToTime(item.drivingDuration)}</Text>
+        <Text style={styles.cell}>{(item.startDriveTime.substring(0,5))??""}</Text>
+        <Text style={styles.cell}>{item.endDriveTime?.substring(0,5)??""}</Text>
+        <Text style={styles.cell}>{scheduleService.minutesToTime(item.drivingDuration)?.substring(0,5)??""}</Text>
         {/* <Text style={styles.cell}>{item.timeLeft}</Text> */}
       </View>
     );
@@ -31,7 +32,7 @@ const Schedule = () => {
     <Layout style={styles.container}>
       {/* Header */}
       <ThemeText style={styles.title} text="Race Schedule" />
-      <ScrollView horizontal style={styles.container} bounces={false}>
+      <ScrollView style={styles.container} bounces={false}>
         <View style={styles.container}>
 
           <View style={styles.header}>
@@ -45,7 +46,7 @@ const Schedule = () => {
           {/* Table Rows with Vertical Scroll */}
           <FlatList
             // data={raceData}
-            data={schedule}
+            data={schedule?.schedule??[]}
             bounces={false}
             renderItem={renderRow}
             keyExtractor={(item, index) => index.toString()}
@@ -63,24 +64,24 @@ export default observer(Schedule);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
     backgroundColor: '#000',
   },
   header: {
     flexDirection: 'row',
     backgroundColor: '#fff',
     paddingVertical: 10,
-    paddingHorizontal: 5,
     borderBottomWidth: 1,
     borderColor: '#ddd',
+    justifyContent: 'space-between',
   },
   headerText: {
     flex: 1,
     fontWeight: 'bold',
     textAlign: 'center',
-    color: '#000',
-    minWidth: 100, // Adjust column width for horizontal scrolling
+    color: '#000', 
+    marginHorizontal:5
   },
+ 
   tableContainer: {
     maxHeight: 400, // Set a fixed height to allow vertical scrolling
   },
@@ -99,8 +100,7 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
     color: '#fff',
-    minWidth: 100, // Adjust column width for horizontal scrolling
-  },
+   },
   title: {
     textAlign: 'center',
     fontSize: 20,
@@ -108,5 +108,8 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     borderBottomColor: '#999',
     borderBottomWidth: 1
+  },
+  stopRow:{
+    backgroundColor:'yellow'
   }
 });
