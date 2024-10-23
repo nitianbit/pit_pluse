@@ -1,3 +1,4 @@
+import CheckIcon from "./CheckIcon";
 import CloseIcon from "./CloseIcon";
 import FlagDotted from "./FlagDottedSvg";
 import FlagSvg from "./FlagSvg";
@@ -14,5 +15,6 @@ export {
     SetupSvg,
     TimerSvg,
     FlagDotted,
-    FuelIcon
+    FuelIcon,
+    CheckIcon
 }

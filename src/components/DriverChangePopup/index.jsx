@@ -8,18 +8,19 @@ import driverStore from '../../store/DriverStore'
 import { FLAG_TYPE } from '../../utils/constants'
 import { showMessage } from 'react-native-flash-message'
 import useThemeColor from '../../hooks/useThemeColor'
+import { CheckIcon } from '../../assets/svgs'
 
 
-const DriverChangePopup = ({ visible, toggleVisible, }) => {
+const DriverChangePopup = ({ visible, toggleVisible, currentDriver }) => {
     const theme = useThemeColor();
     const { data } = raceStore;
     const [driverSeleted, setDriverSelected] = React.useState(null);
 
     useEffect(() => {
         if (visible) {
-            setDriverSelected(null);
+            setDriverSelected(currentDriver ?? null);
         }
-    }, [visible])
+    }, [visible, currentDriver]);
 
     const showSuccessMsg = () => {
         //show success message
@@ -54,6 +55,7 @@ const DriverChangePopup = ({ visible, toggleVisible, }) => {
                         return (
                             <TouchableOpacity style={styles.driverCard} onPress={() => onChangeDriver(index)}>
                                 <ThemeText style={styles.driverName} text={driver.name ? driver.name : `Driver ${index + 1}`} />
+                                {driverSeleted === index ? <CheckIcon /> : null }
                             </TouchableOpacity>
                         )
                     }}
@@ -82,7 +84,11 @@ const styles = StyleSheet.create({
     driverCard: {
         borderRadius: 10,
         padding: 10,
-        paddingVertical:15
+        paddingVertical: 15,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
     driverName: {
         fontSize: 20,

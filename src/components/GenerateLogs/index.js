@@ -19,6 +19,8 @@ const GenerateLogs = () => {
   const [actionModal, setActionModal] = useState(false);
   const toggleActionModal = () => setActionModal(prev => !prev);
   const { status } = raceStats;
+  const {driverStats}=driverStore;
+  const {currentDriver}=driverStats;
   const [changeDriverModal,setChangeDriverModel]=useState(false);
   const toggleChangeDriverModal=()=>setChangeDriverModel(prev=>!prev);
 
@@ -110,7 +112,7 @@ const GenerateLogs = () => {
         </View>
       </CenteredModal>
 
-      <DriverChangePopup visible={changeDriverModal} toggleVisible={toggleChangeDriverModal} />
+      <DriverChangePopup currentDriver={currentDriver} visible={changeDriverModal} toggleVisible={toggleChangeDriverModal} />
 
     </>
   )

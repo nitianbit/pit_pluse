@@ -4,6 +4,7 @@ import { STORAGE_KEYS } from "../services/Storage/constants";
 import { DEFAULT_STATS_DATA } from "../utils/constants";
 import scheduleService from "../services/schedule";
 import moment from "moment";
+import raceStore from "./RaceStore";
 
 class DriverStore {
     driverStats = DEFAULT_STATS_DATA.driver; // Example: { driverId: { totalDrivingDuration: seconds, durationCovered: seconds } }
@@ -20,7 +21,7 @@ class DriverStore {
         for (let i = 0; i < drivers.length; i++) {
             runInAction(() => {
                 this.driverStats.stats[i] = { 
-                    totalDrivingDuration: (scheduleService.data.driverDurationList[i]??0)*60, 
+                    totalDrivingDuration: raceStore.data.duration*60*60, 
                     durationCovered: this.driverStats.stats[i]?.durationCovered??0
                  };
             })
