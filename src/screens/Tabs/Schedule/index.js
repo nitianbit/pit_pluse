@@ -1,12 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, ScrollView, StyleSheet } from 'react-native';
-import { Layout, ThemeText } from '../../../components';
- import scheduleService from '../../../services/schedule';
-import storageService from '../../../services/Storage';
-import { STORAGE_KEYS } from '../../../services/Storage/constants';
-import raceStore from '../../../store/RaceStore';
 import { observer } from 'mobx-react-lite';
-import { DIMENSIONS } from '../../../utils/constants';
+import React from 'react';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { Layout, ThemeText } from '../../../components';
+import scheduleService from '../../../services/schedule';
+import raceStore from '../../../store/RaceStore';
  
 
 const Schedule = () => { 
@@ -18,8 +15,8 @@ const Schedule = () => {
     const rowStyle = index % 2 === 0 ? styles.rowEven : styles.rowOdd;
 
     return (
-      <View style={[styles.row, rowStyle,item?.stop && styles.stopRow]}>
-        <Text style={styles.cell}>{item.name}</Text>
+      <View style={[styles.row, rowStyle,item?.type=="stop" && styles.stopRow]}>
+        <Text style={styles.cell}>{item.name}{item?.type??""}</Text>
         <Text style={styles.cell}>{(item.startDriveTime.substring(0,5))??""}</Text>
         <Text style={styles.cell}>{item.endDriveTime?.substring(0,5)??""}</Text>
         <Text style={styles.cell}>{scheduleService.minutesToTime(item.drivingDuration)?.substring(0,5)??""}</Text>
@@ -32,7 +29,7 @@ const Schedule = () => {
     <Layout style={styles.container}>
       {/* Header */}
       <ThemeText style={styles.title} text="Race Schedule" />
-      <ScrollView style={styles.container} bounces={false}>
+      <View style={styles.container} bounces={false}>
         <View style={styles.container}>
 
           <View style={styles.header}>
@@ -54,7 +51,7 @@ const Schedule = () => {
           />
         </View>
 
-      </ScrollView>
+      </View>
     </Layout>
   );
 };
@@ -89,12 +86,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: 15,
     paddingHorizontal: 5,
+    borderBottomWidth:1,
+    borderColor:'#DCDCDC'
   },
   rowOdd: {
-    backgroundColor: '#8B0000', // Red color for odd rows
+     backgroundColor: '#464646'
   },
   rowEven: {
-    backgroundColor: '#333', // Dark background for even rows
+    backgroundColor: '#656565',  // Example for even rows
   },
   cell: {
     flex: 1,
@@ -110,6 +109,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1
   },
   stopRow:{
-    backgroundColor:'yellow'
+    backgroundColor:'#4A90E2'
   }
 });
