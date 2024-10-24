@@ -66,8 +66,8 @@ export const RACE_STATUS={
 
 export const FLAG_TYPE={
   RED_FLAG:'Red Flag',
-  BLACK_FLAG:'blackFlag',
-  GREEN_FLAG:'greenFlag',
+  BLACK_FLAG:'Black Flag',
+  GREEN_FLAG:'Green Flag',
   REFUEL:'Refuel',
   DRIVER_CHANGE:'Driver Change',
 }

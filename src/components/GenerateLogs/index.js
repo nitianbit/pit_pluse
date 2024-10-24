@@ -11,18 +11,23 @@ import driverStore from '../../store/DriverStore'
 import fuelStore from '../../store/FuelStore'
 import { showMessage } from 'react-native-flash-message'
 import DriverChangePopup from '../DriverChangePopup'
+import PitStop from '../PitStop'
 
 
 
 const GenerateLogs = () => {
   const { data, raceStats ,flags} = raceStore;
   const [actionModal, setActionModal] = useState(false);
-  const toggleActionModal = () => setActionModal(prev => !prev);
+  const toggleActionModal = () => setActionModal(prev =>  !prev);
   const { status } = raceStats;
   const {driverStats}=driverStore;
   const {currentDriver}=driverStats;
   const [changeDriverModal,setChangeDriverModel]=useState(false);
   const toggleChangeDriverModal=()=>setChangeDriverModel(prev=>!prev);
+  const [flagKind,setFlagKind]=useState(null);//to handle driver change and refuel both simultaneouly
+
+  const [pitStopModal, setPitStopModal] = useState(false);
+  const togglePitStopModal = () => setPitStopModal(prev => !prev);
 
   const showSuccessMsg=()=>{
             //show success message
@@ -38,15 +43,17 @@ const GenerateLogs = () => {
       case FLAG_TYPE.BLACK_FLAG:
         toggleActionModal();
         showSuccessMsg();
-        return raceStore.generateLogs();
+        return raceStore.generateLogs(FLAG_TYPE.BLACK_FLAG);
 
       case FLAG_TYPE.REFUEL:
-        toggleActionModal();
+        fuelStore.refuel();
+        setActionModal(false);
         showSuccessMsg();
         return raceStore.generateLogs(FLAG_TYPE.REFUEL);
 
       case FLAG_TYPE.DRIVER_CHANGE:
-        toggleActionModal();
+        setFlagKind(null);
+        setActionModal(false);
         // return raceStore.generateLogs(FLAG_TYPE.DRIVER_CHANGE);
         return toggleChangeDriverModal();
 
@@ -67,9 +74,34 @@ const GenerateLogs = () => {
         return null;
     }
 
-    
-
   }
+
+  const onSelect = (index) => {
+    //1 --> refuel
+    //2 --> driver change
+    //3 --> driver change and refuel
+
+    switch (index) { 
+        case 1:
+          return raiseFlag(FLAG_TYPE.REFUEL);
+  
+        case 2://DRIVER_CHANGE
+          return raiseFlag(FLAG_TYPE.DRIVER_CHANGE);
+  
+        case 3://driver change and refuel
+           setFlagKind(3);
+           toggleChangeDriverModal();
+  
+        default:
+          return null;
+      }
+  
+}
+
+const handlePitStopClick=()=>{
+  toggleActionModal();
+  setPitStopModal(true);
+}
 
 
 
@@ -97,22 +129,32 @@ const GenerateLogs = () => {
 
       <CenteredModal visible={actionModal} animationType='slide' transparent={true} onClose={toggleActionModal}>
         <View style={styles.btns}>
+
           <TouchableOpacity style={[styles.startButton, { backgroundColor: '#000', borderWidth: 1, borderColor: '#999' }]} onPress={() => raiseFlag(FLAG_TYPE.BLACK_FLAG)} >
             <Text style={styles.buttonText}>Black Flag</Text>
           </TouchableOpacity>
+
           <TouchableOpacity style={[styles.startButton, { backgroundColor: '#FF5A5F' }]} onPress={() => raiseFlag(FLAG_TYPE.RED_FLAG)}>
             <Text style={styles.buttonText}>Red Flag</Text>
           </TouchableOpacity>
+
           <TouchableOpacity style={[styles.startButton, { backgroundColor: '#000', borderWidth: 1, borderColor: '#999' }]} onPress={() => raiseFlag(FLAG_TYPE.REFUEL)}>
             <Text style={styles.buttonText}>Refuel</Text>
           </TouchableOpacity>
+
           <TouchableOpacity style={[styles.startButton, { backgroundColor: '#000', borderWidth: 1, borderColor: '#999' }]} onPress={() => raiseFlag(FLAG_TYPE.DRIVER_CHANGE)}>
             <Text style={styles.buttonText}>Change Driver</Text>
           </TouchableOpacity>
+
+          <TouchableOpacity style={[styles.startButton, { backgroundColor: '#000', borderWidth: 1, borderColor: '#999' }]} onPress={handlePitStopClick}>
+                <Text style={styles.buttonText}>Pit Stop</Text>
+            </TouchableOpacity>
+
         </View>
       </CenteredModal>
 
-      <DriverChangePopup currentDriver={currentDriver} visible={changeDriverModal} toggleVisible={toggleChangeDriverModal} />
+      <PitStop onSelect={onSelect} visible={pitStopModal} toggleVisible={togglePitStopModal}/>
+      <DriverChangePopup flagKind={flagKind} currentDriver={currentDriver} visible={changeDriverModal} toggleVisible={toggleChangeDriverModal} />
 
     </>
   )

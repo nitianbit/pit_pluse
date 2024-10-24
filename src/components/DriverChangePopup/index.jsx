@@ -9,9 +9,10 @@ import { FLAG_TYPE } from '../../utils/constants'
 import { showMessage } from 'react-native-flash-message'
 import useThemeColor from '../../hooks/useThemeColor'
 import { CheckIcon } from '../../assets/svgs'
+import fuelStore from '../../store/FuelStore'
 
 
-const DriverChangePopup = ({ visible, toggleVisible, currentDriver }) => {
+const DriverChangePopup = ({ visible, toggleVisible, currentDriver, flagKind = 2 }) => {
     const theme = useThemeColor();
     const { data } = raceStore;
     const [driverSeleted, setDriverSelected] = React.useState(null);
@@ -35,7 +36,13 @@ const DriverChangePopup = ({ visible, toggleVisible, currentDriver }) => {
     }
 
     const proceed = () => {
-        if (driverSeleted) {
+        if (driverSeleted !== null) {
+            //if flagType is three then also refuel and then change driver
+            if (flagKind === 3) {
+                //driver change and refuel
+                fuelStore.refuel();
+                raceStore.generateLogs(FLAG_TYPE.REFUEL);
+            }
             driverStore.changeCurrentDriver(driverSeleted);
             showSuccessMsg();
             toggleVisible();
@@ -55,7 +62,7 @@ const DriverChangePopup = ({ visible, toggleVisible, currentDriver }) => {
                         return (
                             <TouchableOpacity style={styles.driverCard} onPress={() => onChangeDriver(index)}>
                                 <ThemeText style={styles.driverName} text={driver.name ? driver.name : `Driver ${index + 1}`} />
-                                {driverSeleted === index ? <CheckIcon /> : null }
+                                {driverSeleted === index ? <CheckIcon /> : null}
                             </TouchableOpacity>
                         )
                     }}

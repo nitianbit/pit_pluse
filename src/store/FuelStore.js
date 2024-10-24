@@ -91,6 +91,14 @@ class FuelStore {
         this.saveFuelData(); // Save one last time before stopping
     }
 
+    refuel= () => {
+        this.startFuelTimer();
+        this.fuelStats.durationCovered = 0;
+        this.fuelStats.startTime = moment().unix();
+        this.saveFuelData();
+        this.startFuelTimer();
+    }
+
 
 
     resetData = () => {
