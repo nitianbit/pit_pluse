@@ -138,13 +138,13 @@ const handlePitStopClick=()=>{
             <Text style={styles.buttonText}>Red Flag</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={[styles.startButton, { backgroundColor: '#000', borderWidth: 1, borderColor: '#999' }]} onPress={() => raiseFlag(FLAG_TYPE.REFUEL)}>
+          {/* <TouchableOpacity style={[styles.startButton, { backgroundColor: '#000', borderWidth: 1, borderColor: '#999' }]} onPress={() => raiseFlag(FLAG_TYPE.REFUEL)}>
             <Text style={styles.buttonText}>Refuel</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={[styles.startButton, { backgroundColor: '#000', borderWidth: 1, borderColor: '#999' }]} onPress={() => raiseFlag(FLAG_TYPE.DRIVER_CHANGE)}>
             <Text style={styles.buttonText}>Change Driver</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <TouchableOpacity style={[styles.startButton, { backgroundColor: '#000', borderWidth: 1, borderColor: '#999' }]} onPress={handlePitStopClick}>
                 <Text style={styles.buttonText}>Pit Stop</Text>

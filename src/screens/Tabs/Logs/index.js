@@ -7,8 +7,29 @@ import moment from 'moment'
 import raceStore from '../../../store/RaceStore'
 import { observer } from 'mobx-react-lite'
 
+function formatTimeLeft(totalSeconds) {
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  let result="";
+  if(hours>0){
+    result+=`${hours}h `;
+  }
+  if(minutes>0){
+    result+=`${minutes}m `;
+  }
+  if(seconds>0 && hours<=0){
+    result+=`${seconds}s`;
+  }
+  return result;
+
+  // return `${hours}h ${minutes}m ${seconds}s`;
+}
+
+
 const Logs = () => {
  const {logs}= raceStore;
+ console.log(logs)
 
   return (
     <SafeAreaView style={styles.container}>
@@ -28,8 +49,8 @@ const Logs = () => {
           logs.map((log, index) => (
             <View key={index} style={styles.tableRow}>
               <ThemeText style={styles.cellText} text={log.currentDriver} /> 
-              <ThemeText style={styles.cellText} text={scheduleService.minutesToTime(log.timeLeftForRace??0)} /> 
-              <ThemeText style={styles.cellText} text={scheduleService.minutesToTime(log.timeLeftForFuel??0)} /> 
+              <ThemeText style={styles.cellText} text={formatTimeLeft(log.timeLeftForRace??0)} /> 
+              <ThemeText style={styles.cellText} text={formatTimeLeft(log.timeLeftForFuel??0)} /> 
               <ThemeText style={styles.cellText} text={log.event || 'N/A'} /> 
               <ThemeText style={styles.cellText} text={moment.unix(log.currentTime).format('hh:mm A')}/> 
             </View>
