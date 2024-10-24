@@ -16,7 +16,7 @@ const Schedule = () => {
 
     return (
       <View style={[styles.row, rowStyle,item?.type=="stop" && styles.stopRow]}>
-        <Text style={styles.cell}>{item.name}{item?.type??""}</Text>
+        <Text style={styles.cell}>{item.name}</Text>
         <Text style={styles.cell}>{(item.startDriveTime.substring(0,5))??""}</Text>
         <Text style={styles.cell}>{item.endDriveTime?.substring(0,5)??""}</Text>
         <Text style={styles.cell}>{scheduleService.minutesToTime(item.drivingDuration)?.substring(0,5)??""}</Text>

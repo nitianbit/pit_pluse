@@ -170,7 +170,8 @@ class ScheduleService {
     }
 
     getStats = (data) => {
-        let stops = data?.stops?.map(stop => ({ ...stop,start:moment(stop.start).format('HH:mm') }));
+        this.currentDriver = 0;
+        let stops = data?.stops?.map(stop => ({ ...stop,start:moment(stop.start).format('HH:mm'),type:'stop' }));
 
         const startTime=moment(data.date).unix();
         const endTime=startTime+(data.duration*60*60)??0;
@@ -180,23 +181,50 @@ class ScheduleService {
 
         const res = [];
         let driverDurationList = Array(data.drivers.length).fill(0);
+        console.log(stops);
 
         for (let i = 0; i < stops.length - 1; i++) {
             let startTime = stops[i].start; //here start time will be in format hh:mm
-            const duration = duration??0;//stop duration how much time to stop there before starting next stint (in mins)
+            const duration = stops[i]?.duration ?? 0;//stop duration how much time to stop there before starting next stint (in mins)
             
-            startTime = this.timeToMinutes(startTime) + duration;
+            startTime = this.timeToMinutes(startTime) + +duration;
             let endTime = this.timeToMinutes(stops[i+1].start);
 
-            res.push(
-                this.getSchedule(
-                    this.minutesToTime(startTime),
-                    this.minutesToTime(endTime), 
-                    data.fuelDuration,
-                    data.drivers.length, 
-                    driverDurationList
+                res.push(
+                    this.getSchedule(
+                        this.minutesToTime(startTime),
+                        this.minutesToTime(endTime),
+                        data.fuelDuration,
+                        data.drivers.length,
+                        driverDurationList
+                    )
                 )
-            )
+                console.log(i,stops[i])
+                
+                if(stops[i].type=='stop'){
+                    console.log(stops[i],startTime,duration,this.minutesToTime(startTime),this.minutesToTime(startTime + +duration))
+
+                    res.push({
+                        startDriveTime: this.minutesToTime(startTime),
+                        endDriveTime: this.minutesToTime(startTime + +duration),
+                        drivingDuration: duration,
+                        name: `Stop ${i + 1}`,
+                        type: 'stop'
+                    })
+                }
+
+
+            
+
+
+            // res.push({
+            //     // startDriveTime: this.minutesToTime(startTime),
+            //     startDriveTime:this.timeToMinutes(startTime) ,
+            //     endDriveTime: this.minutesToTime(startTime + +duration),
+            //     drivingDuration: duration,
+            //     name: `Stop ${i + 1}`,
+            //     type: 'stop'
+            // }) 
             //TODO push the service stop
         }
         //TODO  TOTAL STINTS WILL BE res.flat().LENGTH - NO OF STOPS (excluding start and stop) 
