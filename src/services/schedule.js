@@ -89,7 +89,7 @@ class ScheduleService {
     constructor() {
         this.currentDriver = 0; // Move currentDriver into the class
         this.driverDurationList = [];
-        this.data={};
+        this.data = {};
     }
 
     // Helper function to convert time (HH:MM) to total minutes
@@ -126,8 +126,8 @@ class ScheduleService {
     }
 
     // Main function to generate the schedule
-    getSchedule(startTime, endTime, fuelTime, totalDrivers,driverDurationList=[]) {
- 
+    getSchedule(startTime, endTime, fuelTime, totalDrivers, driverDurationList = []) {
+
         const numberOfDrivers = this.getNumberOfDrivers(startTime, endTime, fuelTime); // Total driver shifts required
         const stintSchedule = [];
         const totalDuration = this.getDuration(startTime, endTime); // Total trip duration
@@ -171,51 +171,47 @@ class ScheduleService {
 
     getStats = (data) => {
         this.currentDriver = 0;
-        let stops = data?.stops?.map(stop => ({ ...stop,start:moment(stop.start).format('HH:mm'),type:'stop' }));
+        let stops = data?.stops?.map(stop => ({ ...stop, start: moment(stop.start).format('HH:mm'), type: 'stop' }));
 
-        const startTime=moment(data.date).unix();
-        const endTime=startTime+(data.duration*60*60)??0;
+        const startTime = moment(data.date).unix();
+        const endTime = startTime + (data.duration * 60 * 60) ?? 0;
 
-        stops.unshift({ start:moment.unix(startTime).format('HH:mm') , duration: 0, type: 'src' });
+        stops.unshift({ start: moment.unix(startTime).format('HH:mm'), duration: 0, type: 'src' });
         stops.push({ start: moment.unix(endTime).format('HH:mm'), duration: 0, type: 'dst' });
 
         const res = [];
         let driverDurationList = Array(data.drivers.length).fill(0);
-        console.log(stops);
 
         for (let i = 0; i < stops.length - 1; i++) {
             let startTime = stops[i].start; //here start time will be in format hh:mm
             const duration = stops[i]?.duration ?? 0;//stop duration how much time to stop there before starting next stint (in mins)
-            
+
+            if (stops[i].type == 'stop') {
+                res.push({
+                    startDriveTime: startTime,
+                    endDriveTime: this.minutesToTime(
+                        this.timeToMinutes(startTime) + +duration
+                    ),
+                    // startDriveTime: this.minutesToTime(startTime),
+                    // endDriveTime: this.minutesToTime(startTime + +duration),
+                    drivingDuration: duration,
+                    name: `Stop ${i + 1}`,
+                    type: 'stop'
+                })
+            }
+
             startTime = this.timeToMinutes(startTime) + +duration;
-            let endTime = this.timeToMinutes(stops[i+1].start);
+            let endTime = this.timeToMinutes(stops[i + 1].start);
 
-                res.push(
-                    this.getSchedule(
-                        this.minutesToTime(startTime),
-                        this.minutesToTime(endTime),
-                        data.fuelDuration,
-                        data.drivers.length,
-                        driverDurationList
-                    )
+            res.push(
+                this.getSchedule(
+                    this.minutesToTime(startTime),
+                    this.minutesToTime(endTime),
+                    data.fuelDuration,
+                    data.drivers.length,
+                    driverDurationList
                 )
-                console.log(i,stops[i])
-                
-                if(stops[i].type=='stop'){
-                    console.log(stops[i],startTime,duration,this.minutesToTime(startTime),this.minutesToTime(startTime + +duration))
-
-                    res.push({
-                        startDriveTime: this.minutesToTime(startTime),
-                        endDriveTime: this.minutesToTime(startTime + +duration),
-                        drivingDuration: duration,
-                        name: `Stop ${i + 1}`,
-                        type: 'stop'
-                    })
-                }
-
-
-            
-
+            )
 
             // res.push({
             //     // startDriveTime: this.minutesToTime(startTime),
@@ -229,11 +225,11 @@ class ScheduleService {
         }
         //TODO  TOTAL STINTS WILL BE res.flat().LENGTH - NO OF STOPS (excluding start and stop) 
         //TODO AVG STINT DURATION = SUM OF total duration of all stints(driverDurationList) / total number of stints
-        const totalStints= res.flat().length - (data.stops?.length ?? 0);
+        const totalStints = res.flat().length - (data.stops?.length ?? 0);
         const totalDuration = driverDurationList.reduce((a, b) => a + b, 0);
         const avgStintDuration = driverDurationList.reduce((a, b) => a + b, 0) / totalStints;
         // const avgStintDuration = driverDurationList.reduce((a, b) => a + b, 0) / driverDurationList.length;
-        
+
         this.data = {
             schedule: res.flat(),
             driverDurationList,
@@ -247,22 +243,22 @@ class ScheduleService {
     }
 
     getCurrentDriverAndTimeLeft() {
-        const currentTime=moment().unix();
+        const currentTime = moment().unix();
         const currentMinutes = this.timeToMinutes(moment.unix(currentTime).format('HH:mm')); // Current time in minutes
 
         const schedule = this.data.schedule; // The complete schedule
-    
-        if(!this.data.schedule){
+
+        if (!this.data.schedule) {
             return {
                 currentDriver: null,
-                timeLeft: 0 
+                timeLeft: 0
             };
         }
         //TODO create schedule if not found
-        if(!this.data.schedule){
+        if (!this.data.schedule) {
             return {
                 currentDriver: null,
-                timeLeft: 0 
+                timeLeft: 0
             };
         }
 
@@ -275,21 +271,21 @@ class ScheduleService {
                 const timeLeft = endMinutes - currentMinutes; // Time left for the driver
                 return {
                     currentDriver: stint.name,
-                    timeLeft: timeLeft 
+                    timeLeft: timeLeft
                 };
             }
         }
 
         return {
             currentDriver: null,
-            timeLeft: 0 
+            timeLeft: 0
         };
     }
 
     getDriversAndTimeLeft() {
         const currentTime = moment().unix(); // Current time as a timestamp
         const currentMinutes = this.timeToMinutes(moment.unix(currentTime).format('HH:mm')); // Current time in minutes
-    
+
         const schedule = this.data.schedule; // The complete schedule
         if (!schedule || schedule.length === 0) {
             return {
@@ -298,9 +294,9 @@ class ScheduleService {
                 timeLeft: 0
             };
         }
-    
+
         let drivers = {}; // Initialize an object for driver details
-    
+
         // Set up drivers with total driving duration and initialize remaining time
         this.data.driverDurationList.forEach((totalDrivingDuration, index) => {
             drivers[index] = {
@@ -308,23 +304,23 @@ class ScheduleService {
                 remainingTime: 0 // Initialize remaining time
             };
         });
-    
+
         let currentDriver = null;
         let timeLeft = 0;
-    
+
         // Iterate through each stint and calculate remaining time
         for (let stint of schedule) {
             const startMinutes = this.timeToMinutes(stint.startDriveTime);
             const endMinutes = this.timeToMinutes(stint.endDriveTime);
             const driver = stint.name;
-    
+
             if (currentMinutes < endMinutes) {
                 // Calculate the remaining time in this stint
                 const remainingInStint = endMinutes - Math.max(currentMinutes, startMinutes);
-    
+
                 // Add remaining time for this driver
                 drivers[driver].remainingTime += remainingInStint;
-    
+
                 // If the current time is within this driver's stint, set them as the current driver
                 if (currentMinutes >= startMinutes && currentMinutes < endMinutes) {
                     currentDriver = driver;
@@ -332,7 +328,7 @@ class ScheduleService {
                 }
             }
         }
-    
+
         return {
             drivers,       // Object containing driver durations including remaining time across all stints
             currentDriver, // Active driver
@@ -386,7 +382,7 @@ class ScheduleService {
     getRemainingRaceAndFuelTime() {
         const currentTime = moment().unix(); // Current time as a timestamp
         const currentMinutes = this.timeToMinutes(moment.unix(currentTime).format('HH:mm')); // Current time in minutes
-    
+
         const schedule = this.data.schedule; // The complete schedule
         if (!schedule || schedule.length === 0) {
             return {
@@ -395,26 +391,26 @@ class ScheduleService {
                 currentStintDuration: 0 // Initialize current stint duration
             };
         }
-    
+
         let remainingRaceTime = 0;
         let remainingFuelTime = 0;
         let currentStintDuration = 0; // Initialize current stint duration
-    
+
         // Calculate total race time
         const raceStart = this.timeToMinutes(schedule[0].startDriveTime);
         const raceEnd = this.timeToMinutes(schedule[schedule.length - 1].endDriveTime);
         const totalRaceTime = raceEnd - raceStart;
-    
+
         // Remaining race time is the difference between current time and race end time
         if (currentMinutes < raceEnd) {
             remainingRaceTime = raceEnd - currentMinutes;
         }
-    
+
         // Find remaining time for the next fuel stop and current stint duration by checking the schedule
         for (let stint of schedule) {
             const startMinutes = this.timeToMinutes(stint.startDriveTime);
             const endMinutes = this.timeToMinutes(stint.endDriveTime);
-    
+
             // If current time is within a stint, find the remaining time in this stint
             if (currentMinutes >= startMinutes && currentMinutes < endMinutes) {
                 remainingFuelTime = endMinutes - currentMinutes; // Remaining fuel time
@@ -422,7 +418,7 @@ class ScheduleService {
                 break;
             }
         }
-    
+
         return {
             remainingRaceTime,
             remainingFuelTime,
@@ -446,10 +442,10 @@ class ScheduleService {
             currentDriver
         };
     }
-    
 
-      
-    
+
+
+
 
 }
 
