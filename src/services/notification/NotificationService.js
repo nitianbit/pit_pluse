@@ -1,4 +1,4 @@
-import notifee, { TimestampTrigger, TriggerType } from '@notifee/react-native';
+import notifee, { AndroidImportance, EventType, TimestampTrigger, TriggerType } from '@notifee/react-native';
 
 class NotificationService {
     // Method to display an immediate notification
@@ -31,12 +31,14 @@ class NotificationService {
             const channelId = await notifee.createChannel({
                 id: 'default',
                 name: 'Default Channel',
+                importance: AndroidImportance.HIGH,
+
             });
 
             // Create a time-based trigger
             const trigger = {
                 type: TriggerType.TIMESTAMP,
-                timestamp: triggerTime*1000, // Trigger time (in milliseconds)
+                timestamp: triggerTime * 1000, // Trigger time (in milliseconds)
             };
 
             // Schedule the notification
@@ -82,7 +84,39 @@ class NotificationService {
         }
     }
 
+    // Listener for foreground notification events
+    static initializeForegroundListener = () => {
+        notifee.onForegroundEvent(({ type, detail }) => {
+            if (type === EventType.PRESS) {
+                console.log('User pressed the notification (foreground):', detail.notification);
+                // Add navigation or other actions here
+            } else if (type === EventType.DISMISSED) {
+                console.log('User dismissed the notification (foreground):', detail.notification);
+            }
+        });
+    };
+
+    static initializeBackgroundListener = async () => {
+        await notifee.onBackgroundEvent(async ({ type, detail }) => {
+            if (type === EventType.PRESS) {
+                console.log('Notification pressed in the background:', detail.notification);
+                // Add logic or navigation here for background events
+            }
+        });
+    };
+
+    static removeAllListeners = () => {
+        notifee.removeAllListeners();
+        console.log('All notification listeners have been removed');
+    };
+
+    static initializeListeners = () => {
+        this.initializeForegroundListener();
+        this.initializeBackgroundListener();
+    };
+
+
 }
 
 export default NotificationService;
-export const notificationService=new NotificationService();
+export const notificationService = new NotificationService();
