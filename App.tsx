@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StatusBar, StyleSheet, View } from 'react-native';
 
 import {
@@ -6,10 +6,17 @@ import {
 } from '@react-navigation/native';
 import FlashMessage from 'react-native-flash-message';
 import Routes from './src/navigation/Routes';
+import NotificationService from './src/services/notification/NotificationService';
 
 export const navigationRef = createNavigationContainerRef();
 const App = () => {
   const [routeName, setRouteName] = useState<string>('');
+  
+  useEffect(() => {
+    NotificationService.requestPermission();
+  }, []);
+
+
   return (
     <>
       <StatusBar backgroundColor="#2892B4" />
