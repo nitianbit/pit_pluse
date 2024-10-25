@@ -1,6 +1,10 @@
 import notifee, { AndroidImportance, EventType, TimestampTrigger, TriggerType } from '@notifee/react-native';
 
 class NotificationService {
+    raceNotificationId = null;
+    fuelNotificationId = null;
+    driverChangeNotificationId = null;
+
     // Method to display an immediate notification
     static async displayNotification(title, body) {
         try {
@@ -11,7 +15,7 @@ class NotificationService {
             });
 
             // Display a notification
-            await notifee.displayNotification({
+            const notificationId = await notifee.displayNotification({
                 title: title,
                 body: body,
                 android: {
@@ -19,6 +23,7 @@ class NotificationService {
                     smallIcon: 'ic_launcher', // Ensure you have this icon in the drawable folder
                 },
             });
+            return notificationId;
         } catch (error) {
             console.error('Error displaying notification:', error);
         }
@@ -42,7 +47,7 @@ class NotificationService {
             };
 
             // Schedule the notification
-            await notifee.createTriggerNotification(
+            const notificationId = await notifee.createTriggerNotification(
                 {
                     title: title,
                     body: body,
@@ -53,6 +58,7 @@ class NotificationService {
                 },
                 trigger
             );
+            return notificationId
         } catch (error) {
             console.error('Error scheduling notification:', error);
         }
