@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Button, TextInput, Pressable } from 'react-native';
 import useThemeColor from '../../../hooks/useThemeColor';
-import { Card, CenteredModal, Layout, ThemedInput, ThemeText } from '../../../components';
+import { Card, CenteredModal, Layout, ThemedInput, ThemeText, TopMenu } from '../../../components';
 import { Slider } from '@miblanchard/react-native-slider';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
 import { COLORS, MODAL_TYPE } from '../../../utils/constants';
 import { convertMinutesToHoursAndMinutes } from '../../../utils/helper';
 import CounterButton from '../../../components/CounterButton';
-import { ResetSvg } from '../../../assets/svgs';
+import { LightMode, ResetSvg } from '../../../assets/svgs';
 import storageService from '../../../services/Storage';
 import raceStore from '../../../store/RaceStore';
 import { observer } from 'mobx-react-lite';
+import NotificationService from '../../../services/notification/NotificationService';
 
 
 
@@ -47,15 +48,18 @@ const Setup = () => {
     }
   } 
 
+  const create=()=>{
+    NotificationService.displayNotification('RACE STARTED', 'RACE STARTED');
+    NotificationService.scheduleNotification('RACE STARTED TIMER', 'RACE STARTED',moment().unix()+10);
+  }
+
   return (
     <Layout >
       <ScrollView>
         <ThemeText style={styles.title} text="Setup" />
         <ThemeText style={styles.subTitle} text="RACE CONFIGURATION" />
 
-        <TouchableOpacity style={styles.resetBtn} onPress={() => openModal(MODAL_TYPE.RESET, true)}>
-          <ResetSvg fill={theme.text} />
-        </TouchableOpacity>
+        <TopMenu openModal={openModal} closeModal={closeModal} />
 
         <Card >
 

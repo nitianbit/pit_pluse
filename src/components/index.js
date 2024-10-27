@@ -8,6 +8,7 @@ import ProgressBar from "./ProgressBar";
 import FuelTimer from "./Race/FuelTimer";
 import RaceTimer from "./Race/RaceTimer";
 import DriverTimer from "./Race/DriverTimer";
+import TopMenu from "./TopMenu";
 
 export {
     Layout,
@@ -19,6 +20,7 @@ export {
     RaceTimer,
     DriverTimer,
     FuelTimer,
-    ProgressBar
+    ProgressBar,
+    TopMenu
     
 }

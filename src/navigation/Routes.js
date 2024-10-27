@@ -4,17 +4,21 @@ import { DarkTheme, DefaultTheme, NavigationContainer } from '@react-navigation/
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavName } from './constants';
 import { Splash } from '../screens';
-import {useColorScheme} from 'react-native';
+import { useColorScheme } from 'react-native';
 import BottomNavigation from './BottomNavigation';
+import { observer } from 'mobx-react-lite';
+import themeService, { THEME } from '../store/themeStore';
 //https://www.npmjs.com/package/@miblanchard/react-native-slider
 
 
 const Stack = createStackNavigator();
 
 
- const Routes = (props) => {
+const Routes = (props) => {
     const scheme = useColorScheme();
-    const MyTheme = scheme === 'dark' ? DarkTheme : DefaultTheme;
+    // const MyTheme = scheme === 'dark' ? DarkTheme : DefaultTheme;
+    const { currentTheme } = themeService;
+    const MyTheme = currentTheme === THEME.DARK ? DarkTheme : DefaultTheme;
 
 
     return (
@@ -27,4 +31,4 @@ const Stack = createStackNavigator();
     );
 };
 
-export default Routes;
+export default observer(Routes);

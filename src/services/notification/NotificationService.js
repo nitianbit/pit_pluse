@@ -6,7 +6,7 @@ class NotificationService {
     driverChangeNotificationId = null;
 
     // Method to display an immediate notification
-    static async displayNotification(title, body) {
+    static async displayNotification(title, body,type) {
         try {
             // Create a channel for Android (required)
             const channelId = await notifee.createChannel({
