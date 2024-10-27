@@ -47,7 +47,6 @@ class RaceStore {
 
     initializeData=async()=>{
         try {
-            console.log("inside constructor...",this.loadRaceData)
             await this.loadRaceSetupAndCreateSchedule()
             this.loadRaceData();  // Load the race data from localStorage if it exists
             this.loadLogsData();
@@ -73,7 +72,6 @@ class RaceStore {
         //TODO set totalDrivingDuration for each driver
         //set currentDriver and startDriverTimer
         const { currentDriver } = scheduleService.getAvgStintDurationAndCurrentDriver();
-        console.log("currentDriver", currentDriver);
         driverStore.changeCurrentDriver(currentDriver);
     }
 
@@ -113,7 +111,6 @@ class RaceStore {
 
         runInAction(() => {
             this.raceStats.status = RACE_STATUS.STARTED;
-            console.log("starting race....", this.raceStats.status)
         })
 
     }
@@ -176,7 +173,6 @@ class RaceStore {
                     this.raceStats.duration = savedData.race.duration;
                     this.raceStats.status = savedData.race.status;
                 })
-                console.log({savedData})
 
                 // Optionally start the timer again to continue the race it trip started
                 if (this.raceStats.status === RACE_STATUS.STARTED) {

@@ -19,7 +19,6 @@ class ThemeStore {
     loadSavedTheme = async () => {
         try {
             const savedTheme = await storageService.get(STORAGE_KEYS.THEME);
-            console.log({savedTheme})
             if (savedTheme && savedTheme.theme) {
                runInAction(()=>{
                 this.currentTheme = savedTheme.theme;

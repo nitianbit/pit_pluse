@@ -55,7 +55,7 @@ class DriverStore {
                     this.driverStats = savedData.driver;
                 });
 
-                if (this.driverStats.currentDriver) {
+                if (![null,undefined].includes(this.driverStats.currentDriver)) {
                     this.startDriverStatsInterval();
                 }
             }
