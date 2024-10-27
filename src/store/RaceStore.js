@@ -69,10 +69,10 @@ class RaceStore {
 
         //initialize drivers
         driverStore.initlizeDriverStats(this.data.drivers);
-        //TODO set totalDrivingDuration for each driver
-        //set currentDriver and startDriverTimer
-        const { currentDriver } = scheduleService.getAvgStintDurationAndCurrentDriver();
-        driverStore.changeCurrentDriver(currentDriver);
+        // //TODO set totalDrivingDuration for each driver
+        // //set currentDriver and startDriverTimer
+        // const { currentDriver } = scheduleService.getAvgStintDurationAndCurrentDriver();
+        // driverStore.changeCurrentDriver(currentDriver);
     }
 
     // Start the race timer

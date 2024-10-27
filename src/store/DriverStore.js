@@ -12,7 +12,6 @@ class DriverStore {
 
     constructor() {
         makeAutoObservable(this);
-        this.loadDriverData(); // Load driver data from localStorage if it exists
     }
     initlizeDriverStats(drivers) {
         
@@ -26,6 +25,7 @@ class DriverStore {
                  };
             })
         }
+        this.loadDriverData(); // Load driver data from localStorage if it exists
      }
 
     //this function needs to call every second from the timer
@@ -74,11 +74,11 @@ class DriverStore {
             const currentTime = moment().unix();
 
             runInAction(() => {
-                if (!this.driverStats.startTime) {
+                 if (!this.driverStats.startTime) {
                     this.driverStats.startTime = currentTime;
                 }
-                const elapsedTime = currentTime - this.driverStats.startTime;
-                 this.updateDriverStats(this.driverStats.currentDriver, elapsedTime, elapsedTime);
+                 const elapsedTime = currentTime - this.driverStats.startTime;
+                  this.updateDriverStats(this.driverStats.currentDriver, elapsedTime, elapsedTime);
             });
 
             this.saveDriverData(); // Save the updated driver data in localStorage
@@ -98,7 +98,6 @@ class DriverStore {
         if (this.timerInterval) {
             this.stopDriverStatsInterval();
         }
-        
         runInAction(() => {
             this.driverStats.currentDriver = driverId;
             this.driverStats.startTime = moment().unix(); 
