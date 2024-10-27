@@ -36,17 +36,26 @@ class RaceStore {
     constructor() {
         try {
             makeAutoObservable(this);
-            console.log("inside constructor...",this.loadRaceData)
-            this.loadRaceData();  // Load the race data from localStorage if it exists
-            this.loadLogsData();
-    
-            // Create a debounced version of createSchedule
             this.debouncedCreateSchedule = debounce(this.createSchedule.bind(this), 500);
+            this.initializeData();
             
         } catch (error) {
             console.log(error)
         }
 
+    }
+
+    initializeData=async()=>{
+        try {
+            console.log("inside constructor...",this.loadRaceData)
+            await this.loadRaceSetupAndCreateSchedule()
+            this.loadRaceData();  // Load the race data from localStorage if it exists
+            this.loadLogsData();
+    
+            // Create a debounced version of createSchedule
+        } catch (error) {
+            
+        }
     }
 
     processInitialData = () => {
@@ -118,6 +127,7 @@ class RaceStore {
                 startTime: this.raceStats.startTime,
                 durationCovered: this.raceStats.durationCovered,
                 duration: this.data.duration,//this will be in hours
+                status: this.raceStats.status
             }
         };
         storageService.saveKey(STORAGE_KEYS.RACE_DURATION_STATS,raceDataToSave);
@@ -139,13 +149,14 @@ class RaceStore {
        const savedData = await storageService.get(STORAGE_KEYS.RACE);
        if(savedData && savedData.data){
           runInAction(()=>{
-            this.data=savedData.data;
+            this.data={...savedData.data,date:new Date(savedData.data.date)};
           });
           //create schedule
           this.createSchedule();
        }
+       return true;
       } catch (error) {
-        
+        return false;
       }
     }
 
@@ -163,6 +174,7 @@ class RaceStore {
                     this.raceStats.startTime = savedData.race.startTime;
                     this.raceStats.durationCovered = savedData.race.durationCovered + elapsedSinceLastUpdate;
                     this.raceStats.duration = savedData.race.duration;
+                    this.raceStats.status = savedData.race.status;
                 })
                 console.log({savedData})
 

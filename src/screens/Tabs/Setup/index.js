@@ -14,6 +14,8 @@ import raceStore from '../../../store/RaceStore';
 import { observer } from 'mobx-react-lite';
 import NotificationService from '../../../services/notification/NotificationService';
 import { useTheme } from '@react-navigation/native';
+import fuelStore from '../../../store/FuelStore';
+import driverStore from '../../../store/DriverStore';
 
 
 
@@ -45,6 +47,8 @@ const Setup = () => {
       closeModal();
       storageService.clearAll();
       raceStore.resetData();
+      fuelStore.resetData();
+      driverStore.resetData();
     } catch (error) {
       
     }
@@ -98,6 +102,7 @@ const Setup = () => {
               <ThemeText style={[styles.label]} text='Fuel Duration' />
               <View style={styles.sliderView}>
                 <Slider
+                  value={data?.fuelDuration*60}
                   maximumValue={Math.ceil(4 * 60 * 60)}//to seconds //data?.duration*60*60
                   step={1} //mins wise
                   minimumTrackStyle={{ backgroundColor: COLORS.BOTTOM_ACTIVE_COLOR }}
@@ -184,7 +189,7 @@ const Setup = () => {
         modal
         open={open}
         mode='time'
-        date={data?.date}
+        date={data?.date??new Date()}
         onConfirm={(date) => {
           setOpen(false)
           raceStore.updateData('date', date)
