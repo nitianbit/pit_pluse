@@ -41,14 +41,16 @@ const Schedule = () => {
           </View>
 
           {/* Table Rows with Vertical Scroll */}
-          <FlatList
+          {schedule?.schedule?.length?<FlatList
             // data={raceData}
             data={schedule?.schedule??[]}
             bounces={false}
             renderItem={renderRow}
             keyExtractor={(item, index) => index.toString()}
 
-          />
+          />:(
+            <Text style={styles.noLogsText}>No Schedule available</Text>
+          )}
         </View>
 
       </View>
@@ -109,5 +111,11 @@ const styles = StyleSheet.create({
   },
   stopRow:{
     backgroundColor:'#4A90E2'
-  }
+  },
+  noLogsText: {
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 16,
+    color: '#999',
+  },
 });

@@ -16,7 +16,7 @@ import PitStop from '../PitStop'
 
 
 const GenerateLogs = () => {
-  const { data, raceStats ,flags} = raceStore;
+  const { data, raceStats ,flags,schedule} = raceStore;
   const [actionModal, setActionModal] = useState(false);
   const toggleActionModal = () => setActionModal(prev =>  !prev);
   const { status } = raceStats;
@@ -111,20 +111,22 @@ const handlePitStopClick=()=>{
     <>
       {/* Start Race Button */}
       <View style={styles.lowerBtns}>
-        {!status || status == RACE_STATUS.NOT_STARTED ? <TouchableOpacity style={styles.startButton} onPress={() => raceStore.startRace(true)}>
+        {(!status || status == RACE_STATUS.NOT_STARTED) && schedule?.schdule?.length ? <TouchableOpacity style={styles.startButton} onPress={() => raceStore.startRace(true)}>
           <Text style={styles.buttonText}>Start Race</Text>
         </TouchableOpacity> : null}
 
-        {!flags.redFlag
-          ?
-          <TouchableOpacity style={styles.startButton} onPress={toggleActionModal}>
-            <Text style={styles.buttonText}>Take Action</Text>
-          </TouchableOpacity>
+        {status == RACE_STATUS.STARTED ? <>
+          {!flags.redFlag
+            ?
+            <TouchableOpacity style={styles.startButton} onPress={toggleActionModal}>
+              <Text style={styles.buttonText}>Take Action</Text>
+            </TouchableOpacity>
 
-          : <TouchableOpacity style={[styles.startButton, { backgroundColor: '#4A9' }]} onPress={() => raiseFlag(FLAG_TYPE.GREEN_FLAG)} >
-            <Text style={styles.buttonText}>Green Flag</Text>
-          </TouchableOpacity>
-        }
+            : <TouchableOpacity style={[styles.startButton, { backgroundColor: '#4A9' }]} onPress={() => raiseFlag(FLAG_TYPE.GREEN_FLAG)} >
+              <Text style={styles.buttonText}>Green Flag</Text>
+            </TouchableOpacity>
+          }
+        </> : null}
       </View>
 
       <CenteredModal visible={actionModal} animationType='slide' transparent={true} onClose={toggleActionModal}>
