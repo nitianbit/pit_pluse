@@ -70,7 +70,7 @@ class StintStore {
 
      loadStintData=async()=> {
         try {
-            const savedData = JSON.parse(await storageService.get(STORAGE_KEYS.STINT_DATA));
+            const savedData = JSON.parse(await storageService.get(STORAGE_KEYS.STINT_STATS));
             if (savedData) {
                 const currentTime = moment().unix();
                 const elapsedSinceLastUpdate = currentTime - savedData.startTime;//stint startTime

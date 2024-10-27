@@ -43,12 +43,12 @@ class DriverStore {
         const dataToSave={
             driver: this.driverStats
         }
-        // storageService.saveKey(STORAGE_KEYS.DRIVER_STATS, JSON.stringify(dataToSave));
+        storageService.saveKey(STORAGE_KEYS.DRIVER_STATS, dataToSave);
     }
 
     loadDriverData = async () => {
         try {
-            const savedData = JSON.parse(await storageService.get(STORAGE_KEYS.DRIVER_STATS));
+            const savedData = await storageService.get(STORAGE_KEYS.DRIVER_STATS);
             if (savedData && savedData.driver) {
                 runInAction(() => {
                     // Restore driver stats from saved data

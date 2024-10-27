@@ -52,12 +52,12 @@ class FuelStore {
                 startTime: this.fuelStats.startTime
             }
         }
-        // storageService.saveKey(STORAGE_KEYS.FUEL_STATS, JSON.stringify(fuelStatsToSave));
+        storageService.saveKey(STORAGE_KEYS.FUEL_STATS, fuelStatsToSave);
     }
 
     loadFuelData = async () => {
         try {
-            const savedData = JSON.parse(await storageService.get(STORAGE_KEYS.FUEL_STATS));
+            const savedData = await storageService.get(STORAGE_KEYS.FUEL_STATS);
             if (savedData && savedData.fuel) {
                 const currentTime = moment().unix();
                 const startTime = savedData.fuel.startTime ? savedData.fuel.startTime : currentTime;

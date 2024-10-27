@@ -4,7 +4,6 @@ import storageService from "../services/Storage";
 import { STORAGE_KEYS } from "../services/Storage/constants";
 import moment, { duration } from "moment";
 import scheduleService from "../services/schedule";
-import stintStore from "./StintStore";
 import driverStore from "./DriverStore";
 import fuelStore from "./FuelStore";
 import { getDriverNameUsingIndex, getEvent } from "../utils/helper";
@@ -35,11 +34,18 @@ class RaceStore {
 
 
     constructor() {
-        makeAutoObservable(this);
-        this.loadRaceData();  // Load the race data from localStorage if it exists
-
-        // Create a debounced version of createSchedule
-        this.debouncedCreateSchedule = debounce(this.createSchedule.bind(this), 500);
+        try {
+            makeAutoObservable(this);
+            console.log("inside constructor...",this.loadRaceData)
+            this.loadRaceData();  // Load the race data from localStorage if it exists
+            this.loadLogsData();
+    
+            // Create a debounced version of createSchedule
+            this.debouncedCreateSchedule = debounce(this.createSchedule.bind(this), 500);
+            
+        } catch (error) {
+            console.log(error)
+        }
 
     }
 
@@ -114,15 +120,40 @@ class RaceStore {
                 duration: this.data.duration,//this will be in hours
             }
         };
-        console.log("=====saving====", raceDataToSave)
-        // storageService.saveKey(STORAGE_KEYS.RACE_DURATION_STATS, JSON.stringify(raceDataToSave));
+        storageService.saveKey(STORAGE_KEYS.RACE_DURATION_STATS,raceDataToSave);
+        this.saveLogsData();
+        this.saveRaceSetup();
+    }
+
+    saveRaceSetup=async()=>{
+      try {
+        storageService.saveKey(STORAGE_KEYS.RACE,{
+            data:this.data
+        })
+      } catch (error) {
+        
+      }
+    }
+    loadRaceSetupAndCreateSchedule=async()=>{
+      try {
+       const savedData = await storageService.get(STORAGE_KEYS.RACE);
+       if(savedData && savedData.data){
+          runInAction(()=>{
+            this.data=savedData.data;
+          });
+          //create schedule
+          this.createSchedule();
+       }
+      } catch (error) {
+        
+      }
     }
 
 
     // Load race data from localStorage if it exists
     loadRaceData = async () => {
         try {
-            const savedData = JSON.parse(await storageService.get(STORAGE_KEYS.RACE_DURATION_STATS));
+            const savedData = await storageService.get(STORAGE_KEYS.RACE_DURATION_STATS);
             if (savedData && savedData.race) {
                 const currentTime = moment().unix();
                 const elapsedSinceLastUpdate = currentTime - savedData.race.startTime;
@@ -133,6 +164,7 @@ class RaceStore {
                     this.raceStats.durationCovered = savedData.race.durationCovered + elapsedSinceLastUpdate;
                     this.raceStats.duration = savedData.race.duration;
                 })
+                console.log({savedData})
 
                 // Optionally start the timer again to continue the race it trip started
                 if (this.raceStats.status === RACE_STATUS.STARTED) {
@@ -233,9 +265,9 @@ class RaceStore {
     }
 
     // Load logs data from localStorage if it exists
-    loadRaceData = async () => {
+    loadLogsData = async () => {
         try {
-            const savedData = JSON.parse(await storageService.get(STORAGE_KEYS.RACE_LOGS));
+            const savedData = await storageService.get(STORAGE_KEYS.RACE_LOGS);
             if (savedData && savedData.logs) {
                 // Restore race state
                 runInAction(() => {
@@ -247,9 +279,9 @@ class RaceStore {
         }
     }
 
-    saveRaceData = async () => {
+    saveLogsData = async () => {
         try {
-            const jsonValue = JSON.stringify({ logs: this.logs });
+            const jsonValue = { logs: this.logs };
             await storageService.saveKey(STORAGE_KEYS.RACE_LOGS, jsonValue);
         } catch (error) {
 

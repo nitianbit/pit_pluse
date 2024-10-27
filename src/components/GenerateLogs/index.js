@@ -111,7 +111,7 @@ const handlePitStopClick=()=>{
     <>
       {/* Start Race Button */}
       <View style={styles.lowerBtns}>
-        {(!status || status == RACE_STATUS.NOT_STARTED) && schedule?.schdule?.length ? <TouchableOpacity style={styles.startButton} onPress={() => raceStore.startRace(true)}>
+        {(!status || status == RACE_STATUS.NOT_STARTED) && schedule?.schedule?.length ? <TouchableOpacity style={styles.startButton} onPress={() => raceStore.startRace(true)}>
           <Text style={styles.buttonText}>Start Race</Text>
         </TouchableOpacity> : null}
 
