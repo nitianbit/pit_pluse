@@ -1,15 +1,18 @@
 import { StyleSheet, TextInput, View } from 'react-native'
 import React from 'react'
 import useThemeColor from '../../hooks/useThemeColor'
+import { useTheme } from '@react-navigation/native';
 
 const ThemedInput = ({ value, onChangeText, style = {}, ...props }) => {
   const theme = useThemeColor();
+  const t =useTheme();
 
   return (
     <TextInput
       value={value}
       onChangeText={onChangeText}
-      style={[{ color: theme.text, borderColor: theme.border }, style]} // Applying theme color and border color
+      placeholderTextColor={t.colors.text}
+      style={[{ color: t.colors.text, borderColor: t.colors.border }, style]} // Applying theme color and border color
       {...props}  // Spread other props (optional)
     />
   );

@@ -6,6 +6,7 @@ import { ThemeText } from '../../../components'
 import moment from 'moment'
 import raceStore from '../../../store/RaceStore'
 import { observer } from 'mobx-react-lite'
+import { useTheme } from '@react-navigation/native'
 
 function formatTimeLeft(totalSeconds) {
   const hours = Math.floor(totalSeconds / 3600);
@@ -29,19 +30,27 @@ function formatTimeLeft(totalSeconds) {
 
 const Logs = () => {
  const {logs}= raceStore;
- console.log(logs)
+ const t=useTheme();
 
   return (
     <SafeAreaView style={styles.container}>
       {/* Fixed Table Header */}
       <ThemeText style={styles.title} text="Race Logs" />
-      <View style={styles.tableHeader}>
-        <Text style={styles.headerText}>Driver</Text>
-        <Text style={styles.headerText}>Race Time Left</Text>
-        <Text style={styles.headerText}>Fuel Time Left</Text>
-        <Text style={styles.headerText}>Event</Text>
-        <Text style={styles.headerText}>Time</Text>
+      <View style={[styles.tableHeader,{backgroundColor:t.colors.card}]}>
+        <Text style={[styles.headerText,{color:t.colors.text}]}>Driver</Text>
+        <Text style={[styles.headerText,{color:t.colors.text}]}>Race Time Left</Text>
+        <Text style={[styles.headerText,{color:t.colors.text}]}>Fuel Time Left</Text>
+        <Text style={[styles.headerText,{color:t.colors.text}]}>Event</Text>
+        <Text style={[styles.headerText,{color:t.colors.text}]}>Time</Text>
       </View>
+
+{/* <View style={[styles.tableHeader,{backgroundColor:t.colors.card}]}>
+        <ThemeText value="Driver" style={styles.headerText}/>
+        <ThemeText value="Race Time Left" style={styles.headerText}/>
+        <ThemeText value="Fuel Time Left" style={styles.headerText}/>
+        <ThemeText value="Event" style={styles.headerText}/>
+        <ThemeText value="Time" style={styles.headerText}/>
+      </View> */}
 
       {/* Scrollable Table Rows */}
       <ScrollView style={styles.scrollContainer}>
@@ -82,7 +91,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 10,
     paddingVertical: 10,
-    backgroundColor: '#f2f2f2',
+    // backgroundColor: '#f2f2f2',
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
   },
@@ -107,6 +116,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     flex: 1,
     textAlign: 'center',
+    paddingVertical:10
   },
   noLogsText: {
     textAlign: 'center',

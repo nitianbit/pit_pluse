@@ -1,4 +1,4 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable, runInAction } from "mobx";
 import storageService from "../services/Storage";
 import { STORAGE_KEYS } from "../services/Storage/constants";
 
@@ -19,8 +19,11 @@ class ThemeStore {
     loadSavedTheme = async () => {
         try {
             const savedTheme = await storageService.get(STORAGE_KEYS.THEME);
+            console.log({savedTheme})
             if (savedTheme && savedTheme.theme) {
+               runInAction(()=>{
                 this.currentTheme = savedTheme.theme;
+               })
             }
         } catch (error) {
 
@@ -30,7 +33,7 @@ class ThemeStore {
     toggleTheme = async () => {
         try {
             this.currentTheme = this.currentTheme === THEME.LIGHT ? THEME.DARK : THEME.LIGHT
-            await storageService.saveKey(STORAGE_KEYS.THEME, this.currentTheme);
+            await storageService.saveKey(STORAGE_KEYS.THEME, {theme:this.currentTheme});
         } catch (error) {
 
         }

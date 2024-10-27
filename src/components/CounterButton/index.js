@@ -1,20 +1,23 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import ThemeText from "../ThemeText";
 import { COLORS } from "../../utils/constants";
+import { useTheme } from "@react-navigation/native";
 
-const CounterButton = ({ value, onDecrement, onIncrement }) => (
-    <View style={styles.counterContainer}>
+const CounterButton = ({ value, onDecrement, onIncrement }) => {
+    const theme = useTheme();
+
+    return <View style={styles.counterContainer}>
         <ThemeText style={[styles.label]} text={value} />
-        <View style={styles.buttonContainer}>
+        <View style={[styles.buttonContainer, { backgroundColor: theme.colors.background }]}>
             <TouchableOpacity style={styles.button} onPress={onDecrement}>
-                <Text style={styles.buttonText}>-</Text>
+                <ThemeText style={styles.buttonText} text="-" />
             </TouchableOpacity>
             <TouchableOpacity style={styles.button} onPress={onIncrement}>
-                <Text style={styles.buttonText}>+</Text>
+                <ThemeText style={styles.buttonText} text="+" />
             </TouchableOpacity>
         </View>
     </View>
-);
+};
 
 
 const styles = StyleSheet.create({
@@ -35,7 +38,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     buttonText: {
-        color: COLORS.LIGHT,
+        // color: COLORS.LIGHT,
         fontSize: 30,
     },
     label: {

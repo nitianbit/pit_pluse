@@ -3,9 +3,11 @@ import { Modal, View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'rea
 import ThemeText from '../ThemeText';
 import useThemeColor from '../../hooks/useThemeColor';
 import CloseIcon from '../../assets/svgs/CloseIcon';
+import { useTheme } from '@react-navigation/native';
 
 const CenteredModal = ({ visible, onClose, children, title = "Select",bottom=false }) => {
   const theme = useThemeColor();
+  const t=useTheme();
 
   return (
     <Modal
@@ -15,11 +17,11 @@ const CenteredModal = ({ visible, onClose, children, title = "Select",bottom=fal
       onRequestClose={onClose}
     >
       <View style={[styles.modalContainer,{justifyContent:bottom?'flex-end':'center'}]}>
-        <View style={[styles.modalContent, { backgroundColor: theme.background || 'white' }]}>
+        <View style={[styles.modalContent, { backgroundColor: t.colors.background || 'white',borderWidth:1,borderColor:t.colors.border }]}>
           <View style={styles.header}>
             {title ? <ThemeText style={[styles.title]} text={title} /> : null}
             <TouchableOpacity style={styles.closeIcon} onPress={onClose}>
-              <CloseIcon fill={theme.text} />
+              <CloseIcon fill={t.colors.text} />
             </TouchableOpacity>
           </View>
           {children}
@@ -36,7 +38,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',  // Center the modal vertically
     alignItems: 'center',  // Center the modal horizontally
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',  // Dark overlay
+    backgroundColor: 'rgba(0, 0, 0, 0.9)',  // Dark overlay
   },
   modalContent: {
     width: Dimensions.get('window').width * 0.95,  // Modal width is 80% of screen width

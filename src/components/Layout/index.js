@@ -1,12 +1,15 @@
 import { SafeAreaView, StyleSheet, Text, View, ViewStyle } from 'react-native'
 import React, { ReactNode } from 'react'
+import { useTheme } from '@react-navigation/native'
 
  
 
 const Layout = ({ children, style = {} }) => {
+    const t=useTheme();
+
     return (
         <View style={styles.outerView}>
-            <SafeAreaView style={[styles.mainView, style]}>
+            <SafeAreaView style={[styles.mainView, style,{backgroundColor:t.colors.background}]}>
                 {children}
             </SafeAreaView>
         </View>

@@ -13,6 +13,7 @@ import storageService from '../../../services/Storage';
 import raceStore from '../../../store/RaceStore';
 import { observer } from 'mobx-react-lite';
 import NotificationService from '../../../services/notification/NotificationService';
+import { useTheme } from '@react-navigation/native';
 
 
 
@@ -24,6 +25,7 @@ const CardItem = ({ theme, children }) => (
 
 const Setup = () => {
   const theme = useThemeColor();
+  const t=useTheme();
    const { data, stats } = raceStore;
    
 
@@ -55,7 +57,7 @@ const Setup = () => {
 
   return (
     <Layout >
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <ThemeText style={styles.title} text="Setup" />
         <ThemeText style={styles.subTitle} text="RACE CONFIGURATION" />
 
@@ -66,7 +68,7 @@ const Setup = () => {
           <CardItem theme={theme}>
             <View style={styles.labelContainer}>
               <ThemeText style={[styles.label, { flex: 1 }]} text='Race Start Time' />
-              <View style={styles.timerStart}>
+              <View style={[styles.timerStart,{backgroundColor:t.colors.background}]}>
                 <Button title={moment(data?.date).format('HH:mm')} onPress={() => setOpen(true)} />
               </View>
             </View>
@@ -83,7 +85,7 @@ const Setup = () => {
                   onSlidingComplete={(value) => raceStore.updateData('duration', value[0])}
                   minimumTrackStyle={{ backgroundColor: COLORS.BOTTOM_ACTIVE_COLOR }}
                   maximumTrackStyle={{ backgroundColor: COLORS.PRIMARY }}
-                  thumbTintColor={COLORS.LIGHT}
+                  // thumbTintColor={COLORS.LIGHT}
                   containerStyle={styles.slider}
                 />
                 <ThemeText style={[styles.value]} text={`${data?.duration}h`} />
@@ -100,7 +102,7 @@ const Setup = () => {
                   step={1} //mins wise
                   minimumTrackStyle={{ backgroundColor: COLORS.BOTTOM_ACTIVE_COLOR }}
                   maximumTrackStyle={{ backgroundColor: COLORS.PRIMARY }}
-                  thumbTintColor={COLORS.LIGHT}
+                  // thumbTintColor={COLORS.LIGHT}
                   containerStyle={styles.slider}
                   onValueChange={(value) => raceStore.updateData('fuelDuration', Math.ceil(value[0] / 60))}
                 />
