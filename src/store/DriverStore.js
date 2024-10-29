@@ -16,12 +16,12 @@ class DriverStore {
     initlizeDriverStats(drivers) {
 
         //TODO when race starts loop through drivers and assign in the form of { driverId: { totalDrivingDuration: seconds, durationCovered: seconds } }
-
         for (let i = 0; i < drivers.length; i++) {
             runInAction(() => {
                 this.driverStats.stats[i] = {
                     totalDrivingDuration: raceStore.data.duration * 60 * 60,
-                    durationCovered: this.driverStats.stats[i]?.durationCovered ?? 0
+                    durationCovered: this.driverStats.stats[i]?.durationCovered ?? 0,
+                    startTime : null
                 };
             })
         }
@@ -31,6 +31,7 @@ class DriverStore {
     //this function needs to call every second from the timer
     updateDriverStats = (driverId, durationCovered) => {
         runInAction(() => {
+ 
             if ([null, undefined].includes(driverId)) {
                 const currentDriver = this.fetchCurrentDriver();
                 if (currentDriver === null) {
@@ -38,8 +39,9 @@ class DriverStore {
                 }
             }
             if (!this.driverStats.stats[driverId]) {
-                this.driverStats.stats[driverId] = { totalDrivingDuration: 0, durationCovered: 0 };
+                this.driverStats.stats[driverId] = { totalDrivingDuration: 0, durationCovered: 0,startTime : moment().unix() };
             }
+
             this.driverStats.stats[driverId].durationCovered = durationCovered;
             this.saveDriverData(); // Save changes to localStorage
         })
@@ -49,7 +51,7 @@ class DriverStore {
         const dataToSave = {
             driver: this.driverStats
         }
-        storageService.saveKey(STORAGE_KEYS.DRIVER_STATS, dataToSave);
+         storageService.saveKey(STORAGE_KEYS.DRIVER_STATS, dataToSave);
     }
 
     loadDriverData = async () => {
@@ -76,7 +78,7 @@ class DriverStore {
                 }
             }
         } catch (error) {
-
+            console.log(error)
         }
     }
 
@@ -95,19 +97,18 @@ class DriverStore {
             const currentTime = moment().unix();
 
             runInAction(() => {
-                if (!this.driverStats.startTime) {
-                    this.driverStats.startTime = currentTime;
+                if (!this.driverStats.stats[this.driverStats.currentDriver]?.startTime) {
+                    this.driverStats.stats[this.driverStats.currentDriver].startTime = currentTime;
                 }
-                const elapsedTime = currentTime - this.driverStats.startTime;
+                const elapsedTime = currentTime - this.driverStats.stats[this.driverStats.currentDriver].startTime;
                 this.updateDriverStats(this.driverStats.currentDriver, elapsedTime, elapsedTime);
             });
 
-            this.saveDriverData(); // Save the updated driver data in localStorage
-        }, 1000); // Update every second
+         }, 1000); // Update every second
     }
 
     stopDriverStatsInterval = () => {
-        this.saveDriverData(); // Save one last time before stopping
+        // this.saveDriverData(); // Save one last time before stopping
         clearInterval(this.timerInterval);
         runInAction(() => {
             this.timerInterval = null;
@@ -115,20 +116,13 @@ class DriverStore {
         })
     }
 
-    changeCurrentDriver = (driverId) => {
-        //fetch the new driver's already coveredDuratoin and duration he need to covered from localstorage
-        //save in local storage the old data
-         this.saveDriverData()
-
-        if (this.timerInterval) {
-            this.stopDriverStatsInterval();
+    changeCurrentDriver = (driverId) => { 
+        //only change current driver
+        this.driverStats.currentDriver = driverId;
+        //update prev currentDriver startTime
+        if(driverId && this.driverStats.stats[driverId]){
+            this.driverStats.stats[driverId].startTime = moment().unix()-this.driverStats.stats[driverId].durationCovered??0;
         }
-
-        runInAction(() => {
-            this.driverStats.currentDriver = driverId;
-            this.driverStats.startTime = moment().unix();
-        })
-        this.startDriverStatsInterval();
     }
 
     resetData = () => {
