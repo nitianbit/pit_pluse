@@ -178,7 +178,7 @@ const Setup = () => {
               <ThemeText color={COLORS.DARK} style={styles.stintText} text={`Qty of Stints: ${raceStore.schedule?.totalStints ? raceStore.schedule?.totalStints : 'Not available'}`} />
             </View>
             <View style={styles.stintItem}>
-              <ThemeText color={COLORS.DARK} style={styles.stintText} text={`Avg Stint Duration: ${raceStore.schedule?.avgStintDuration ? parseFloat(raceStore.schedule?.avgStintDuration).toFixed(2) : 'Not available'}`} />
+              <ThemeText color={COLORS.DARK} style={styles.stintText} text={`Avg Stint Duration: ${raceStore.schedule?.avgStintDuration ? parseFloat(raceStore.schedule?.avgStintDuration).toFixed(2) +" mins" : 'Not available'}`} />
             </View>
           </View>
         </Card>
@@ -294,7 +294,7 @@ const styles = StyleSheet.create({
   stintAnalysis: {
     backgroundColor: COLORS.DARK,
     marginVertical: 15,
-    marginHorizontal: 25,
+    marginHorizontal: 15,
     padding: 20,
     borderRadius: 10,
   },
@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 15,
-    paddingHorizontal: 20
+    paddingHorizontal: 10
   },
   stintText: {
     fontSize: 18,
