@@ -105,7 +105,7 @@ class FuelStore {
     }
 
     refuel= () => {
-        this.startFuelTimer();
+        this.stopFuelTimer()
         this.fuelStats.durationCovered = 0;
         this.fuelStats.startTime = moment().unix();
         this.saveFuelData();
