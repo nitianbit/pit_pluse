@@ -126,7 +126,8 @@ export const DEFAULT_STATS_DATA= {
       stats:{
         // [driverIndex]: {
       //     totalDrivingDuration: seconds,
-      //     durationCovered: seconds //only use to show timer value
+      //     durationCovered: seconds //only use to show timer value,
+      //     startTime:null
       // }
       },
       currentDriver: null,
