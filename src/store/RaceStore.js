@@ -8,6 +8,7 @@ import driverStore from "./DriverStore";
 import fuelStore from "./FuelStore";
 import { getDriverNameUsingIndex, getEvent } from "../utils/helper";
 import { Alert } from "react-native";
+import NotificationService from "../services/notification/NotificationService";
 
 // Debounce function
 function debounce(func, delay) {
@@ -95,6 +96,12 @@ class RaceStore {
             this.raceStats.startTime = raceStartTime; // Set if not already set
             this.raceStats.duration = (this.data.duration ?? 0) * 60 * 60;//in seconds
         })
+
+        //schedule notification
+        const elapsedTime = moment().unix() - this.raceStats.startTime
+        const remainingTime = this.raceStats.duration - elapsedTime;
+        NotificationService.scheduleNotification('Race Ended', 'Race Completed', moment().unix() + remainingTime);
+        
 
         // Start the interval to update durationCovered based on elapsed time since startTime
         this.timerInterval = setInterval(() => {

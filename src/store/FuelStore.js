@@ -4,6 +4,7 @@ import { STORAGE_KEYS } from "../services/Storage/constants";
 import moment from "moment";
 import { DEFAULT_STATS_DATA, RACE_STATUS } from "../utils/constants";
 import raceStore from "./RaceStore";
+import NotificationService from "../services/notification/NotificationService";
 
 class FuelStore {
     fuelStats = DEFAULT_STATS_DATA.fuel;
@@ -25,20 +26,32 @@ class FuelStore {
                 this.fuelStats.fuelDuration = raceStore.data.fuelDuration * 60; //as fuelDuration is in minutes
             });
         }
-
+        
         const currentTime = moment().unix();
-
+        
         //if no startTime then set startTime else in case of reload or app open will use the last saved startTime (already done in loadFuelData)
         if (!this.fuelStats.startTime) {
             runInAction(() => {
                 this.fuelStats.startTime = currentTime;
             });
         }
+        
+        //schedule notification
+        const elapsedTime = moment().unix() - (this.fuelStats.startTime??moment().unix());
+        const remainingTime = this.fuelStats.fuelDuration-elapsedTime;
+        if(remainingTime>0){
+            NotificationService.scheduleNotification('Fuel Duration','Fuel Timer Exhausted',moment().unix() + remainingTime);
+        }
+
 
         this.timerInterval = setInterval(() => {
             const elapsedTime = moment().unix() - this.fuelStats.startTime;
             runInAction(() => {
+                console.log("here",)
                 this.fuelStats.durationCovered = elapsedTime;
+                if(elapsedTime>=this.fuelStats.fuelDuration){
+                    this.stopFuelTimer();
+                }
             });
             this.saveFuelData();
         }, 1000); // Update every second

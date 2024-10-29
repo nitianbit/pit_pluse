@@ -1,4 +1,7 @@
 import notifee, { AndroidImportance, EventType, TimestampTrigger, TriggerType } from '@notifee/react-native';
+import storageService from '../Storage';
+
+const types=['raceNotificationId','fuelNotificationId','driverChangeNotificationId'];
 
 class NotificationService {
     raceNotificationId = null;
@@ -30,7 +33,7 @@ class NotificationService {
     }
 
     // Method to schedule a notification at a later time
-    static async scheduleNotification(title, body, triggerTime) {//passing triggerTime in seconds so change it to milliseconds
+    static async scheduleNotification(title, body, triggerTime,type) {//passing triggerTime in seconds so change it to milliseconds
         try {
             // Create a channel (required for Android)
             const channelId = await notifee.createChannel({
@@ -58,6 +61,23 @@ class NotificationService {
                 },
                 trigger
             );
+
+            //if previous notification then clear it
+            if (type) {
+                this[type] = notificationId;
+
+                const prevNotificationId=await this.getNotificationIdFromLocalStorage(type);
+                if(prevNotificationId){
+                    //delete it from the local storage and cancel it's notification
+                    await storageService.removeKey(type);
+                    this.cancelNotification(prevNotificationId);
+                }
+
+                //save new key
+                await this.saveNotificationIdInLocalStorage(type,notificationId);
+            }
+            
+
             return notificationId
         } catch (error) {
             console.error('Error scheduling notification:', error);
@@ -68,6 +88,11 @@ class NotificationService {
     static async cancelAllScheduledNotifications() {
         try {
             await notifee.cancelAllNotifications();
+
+            for(let type of types){
+               storageService.removeKey(type);
+            }
+            
         } catch (error) {
             console.error('Error canceling notifications:', error);
         }
@@ -120,6 +145,14 @@ class NotificationService {
         this.initializeForegroundListener();
         this.initializeBackgroundListener();
     };
+
+    static getNotificationIdFromLocalStorage = async (type) => {
+        return await storageService.get(type)
+    }
+
+    static saveNotificationIdInLocalStorage = async (type, notificationId) => {
+        return await storageService.saveKey(type, notificationId);
+    }
 
 
 }
