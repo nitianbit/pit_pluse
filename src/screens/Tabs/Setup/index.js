@@ -45,11 +45,11 @@ const Setup = () => {
     try {
       //TODO maybe show loader here
       closeModal();
-      storageService.clearAll();
       raceStore.resetData();
       fuelStore.resetData();
       driverStore.resetData();
       NotificationService.cancelAllScheduledNotifications();
+      storageService.clearAll();
     } catch (error) {
       
     }
