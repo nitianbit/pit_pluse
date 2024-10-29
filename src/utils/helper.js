@@ -28,7 +28,7 @@ export const convertMinutesToHoursAndMinutes=(minutes) =>{
   }; 
 
 export const getDriverNameUsingIndex=(index,drivers)=>{
-    return drivers[index]?.name??`Driver ${index+1}`
+    return drivers[index]?.name?drivers[index]?.name:`Driver ${index+1}`
 }
 
 export const getEvent = (flags = {}) => {
