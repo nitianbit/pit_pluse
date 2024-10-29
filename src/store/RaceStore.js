@@ -61,6 +61,7 @@ class RaceStore {
     processInitialData = () => {
         //create schedule
         this.debouncedCreateSchedule();
+        this.createSchedule();
 
         // // Start stint when race starts
         // stintStore.startStint(); // Start the stint when race starts

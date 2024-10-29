@@ -49,6 +49,7 @@ const Setup = () => {
       raceStore.resetData();
       fuelStore.resetData();
       driverStore.resetData();
+      NotificationService.cancelAllScheduledNotifications();
     } catch (error) {
       
     }
