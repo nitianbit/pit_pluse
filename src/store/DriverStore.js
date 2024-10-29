@@ -31,6 +31,13 @@ class DriverStore {
     //this function needs to call every second from the timer
     updateDriverStats = (driverId, durationCovered) => {
         runInAction(() => {
+            console.log("initial", this.driverStats.stats, driverId)
+            if ([null, undefined].includes(driverId)) {
+                const currentDriver = this.fetchCurrentDriver();
+                if (currentDriver === null) {
+                    return;
+                }
+            }
             if (!this.driverStats.stats[driverId]) {
                 this.driverStats.stats[driverId] = { totalDrivingDuration: 0, durationCovered: 0 };
             }
@@ -59,8 +66,8 @@ class DriverStore {
                     this.startDriverStatsInterval();
                 }
             } else {
-                const { currentDriver } = scheduleService.getAvgStintDurationAndCurrentDriver();
-                if (![null, undefined].includes(currentDriver)) {
+                const currentDriver = this.fetchCurrentDriver();
+                if (currentDriver !== null) {
                     this.startDriverStatsInterval();
                 }
             }
@@ -116,7 +123,18 @@ class DriverStore {
     }
 
     resetData = () => {
-        this.driverStats = DEFAULT_STATS_DATA.driver;
+        runInAction(() => {
+            this.driverStats = DEFAULT_STATS_DATA.driver;
+        });
+        this.stopDriverStatsInterval();
+    }
+
+    fetchCurrentDriver = () => {
+        const { currentDriver } = scheduleService.getAvgStintDurationAndCurrentDriver();
+        if (![null, undefined].includes(currentDriver)) {
+            return currentDriver;
+        }
+        return null;
     }
 
 
