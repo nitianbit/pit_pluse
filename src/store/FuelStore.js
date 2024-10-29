@@ -47,7 +47,6 @@ class FuelStore {
         this.timerInterval = setInterval(() => {
             const elapsedTime = moment().unix() - this.fuelStats.startTime;
             runInAction(() => {
-                console.log("here",)
                 this.fuelStats.durationCovered = elapsedTime;
                 if(elapsedTime>=this.fuelStats.fuelDuration){
                     this.stopFuelTimer();
