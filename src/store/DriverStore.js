@@ -97,6 +97,7 @@ class DriverStore {
             const currentTime = moment().unix();
 
             runInAction(() => {
+                //TODO this is crashing
                 if (!this.driverStats.stats[this.driverStats.currentDriver]?.startTime) {
                     this.driverStats.stats[this.driverStats.currentDriver].startTime = currentTime;
                 }
