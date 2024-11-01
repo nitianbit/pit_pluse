@@ -15,7 +15,7 @@ class FuelStore {
         this.loadFuelData();
     }
 
-    startFuelTimer() {
+    async startFuelTimer() {
         if (this.timerInterval) {
             this.stopFuelTimer();
         }
@@ -34,6 +34,14 @@ class FuelStore {
             runInAction(() => {
                 this.fuelStats.startTime = currentTime;
             });
+        }
+
+        const isRedFlag = await storageService.get(STORAGE_KEYS.RED_FLAG);
+        if (isRedFlag) {
+            //update the current stats
+            const elapsedTime = moment().unix() - this.fuelStats.startTime;
+            this.fuelStats.durationCovered = elapsedTime;
+            return;
         }
         
         //schedule notification

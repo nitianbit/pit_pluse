@@ -10,6 +10,7 @@ export const STORAGE_KEYS = {
     DRIVER_STATS: 'DRIVER_STATS',//store the driver stats
     STINT_STATS: 'STINT_STATS',//store the stint stats
     FUEL_STATS: 'FUEL_STATS',//store the stint stats
-    THEME:'THEME'
+    THEME:'THEME',
+    RED_FLAG:'RED_FLAG'
 
 }

@@ -187,6 +187,9 @@ class RaceStore {
                     this.startRace();
                     this.debouncedCreateSchedule();//create schedule
                 }
+
+                //check flag
+                this.checkRedFlag();
             }
         } catch (error) {
 
@@ -304,7 +307,7 @@ class RaceStore {
         }
     }
 
-    generateLogs = (event = null) => {
+    generateLogs = async(event = null) => {
         if (this.raceStats.status !== RACE_STATUS.STARTED) {
             return Alert.alert("Race not started yet.");
         }
@@ -326,9 +329,27 @@ class RaceStore {
 
         if (event === FLAG_TYPE.RED_FLAG) {
             this.flags.redFlag = true;
+            await storageService.saveKey(STORAGE_KEYS.RED_FLAG,true);
         }
         if(event===FLAG_TYPE.GREEN_FLAG){
             this.flags.redFlag = false;
+            await storageService.removeKey(STORAGE_KEYS.RED_FLAG);
+        }
+        return true;
+    }
+
+    // to updat green flag in case of app reload
+    checkRedFlag=async()=>{
+        try {
+            const savedData = await storageService.get(STORAGE_KEYS.RED_FLAG);
+            if (savedData) {
+                // Restore race state
+                runInAction(() => {
+                    this.flags.redFlag = savedData;
+                })
+            }
+        } catch (error) {
+            
         }
     }
 

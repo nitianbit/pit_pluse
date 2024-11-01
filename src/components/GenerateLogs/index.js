@@ -38,7 +38,7 @@ const GenerateLogs = () => {
   }
 
 
-  const raiseFlag = (flagType) => {
+  const raiseFlag = async(flagType) => {
     switch (flagType) {
       case FLAG_TYPE.BLACK_FLAG:
         toggleActionModal();
@@ -65,10 +65,11 @@ const GenerateLogs = () => {
         return raceStore.generateLogs(FLAG_TYPE.RED_FLAG);
         
       case FLAG_TYPE.GREEN_FLAG:
+        await raceStore.generateLogs(FLAG_TYPE.GREEN_FLAG);
         driverStore.restartDriverOnGreenFlag();
         fuelStore.startFuelTimer();
         showSuccessMsg();
-        return raceStore.generateLogs(FLAG_TYPE.GREEN_FLAG);
+        return;
 
       default:
         return null;

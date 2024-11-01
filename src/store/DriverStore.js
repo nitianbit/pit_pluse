@@ -83,7 +83,7 @@ class DriverStore {
     }
 
     // Start the driver stats update interval
-    startDriverStatsInterval = () => {
+    startDriverStatsInterval = async() => {
         if (this.timerInterval) {
             this.stopDriverStatsInterval();
         }
@@ -91,6 +91,11 @@ class DriverStore {
         if (!this.driverStats.currentDriver) {
             const { currentDriver } = scheduleService.getAvgStintDurationAndCurrentDriver();
             this.driverStats.currentDriver = currentDriver;
+        }
+
+        const isRedFlag = await storageService.get(STORAGE_KEYS.RED_FLAG);
+        if (isRedFlag) {
+            return;
         }
 
         this.timerInterval = setInterval(() => {
