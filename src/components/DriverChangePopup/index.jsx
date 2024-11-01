@@ -41,12 +41,16 @@ const DriverChangePopup = ({ visible, toggleVisible, currentDriver, flagKind = 2
             if (flagKind === 3) {
                 //driver change and refuel
                 fuelStore.refuel();
-                raceStore.generateLogs(FLAG_TYPE.REFUEL);
+                driverStore.changeCurrentDriver(driverSeleted);
+                raceStore.generateLogs(FLAG_TYPE.REFUEL_AND_DRIVER_CHANGE);
+            } else {
+                //only driver change
+                driverStore.changeCurrentDriver(driverSeleted);
+                raceStore.generateLogs(FLAG_TYPE.DRIVER_CHANGE);
             }
-            driverStore.changeCurrentDriver(driverSeleted);
             showSuccessMsg();
             toggleVisible();
-            return raceStore.generateLogs(FLAG_TYPE.DRIVER_CHANGE);
+            return;
         }
     }
 

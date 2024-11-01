@@ -70,6 +70,7 @@ export const FLAG_TYPE={
   GREEN_FLAG:'Green Flag',
   REFUEL:'Refuel',
   DRIVER_CHANGE:'Driver Change',
+  REFUEL_AND_DRIVER_CHANGE:'Refuel & Driver Change',
 }
 
 export const getFlagTypeString=(flagType)=>{
