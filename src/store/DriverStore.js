@@ -108,12 +108,14 @@ class DriverStore {
          }, 1000); // Update every second
     }
 
-    stopDriverStatsInterval = () => {
+    stopDriverStatsInterval = (clearData=true) => {
         // this.saveDriverData(); // Save one last time before stopping
         clearInterval(this.timerInterval);
         runInAction(() => {
             this.timerInterval = null;
-            this.driverStats = DEFAULT_STATS_DATA.driver;
+            if(clearData){
+                this.driverStats = DEFAULT_STATS_DATA.driver;
+            }
         })
     }
 
@@ -124,6 +126,15 @@ class DriverStore {
         if(driverId && this.driverStats.stats[driverId]){
             this.driverStats.stats[driverId].startTime = moment().unix()-this.driverStats.stats[driverId].durationCovered??0;
         }
+    }
+
+    restartDriverOnGreenFlag=()=>{
+        const driverId = this.driverStats.currentDriver;
+        //update prev currentDriver startTime
+        if(driverId && this.driverStats.stats[driverId]){
+            this.driverStats.stats[driverId].startTime = moment().unix()-this.driverStats.stats[driverId].durationCovered??0;
+        }
+        this.startDriverStatsInterval();
     }
 
     resetData = () => {

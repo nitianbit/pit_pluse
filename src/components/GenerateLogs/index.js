@@ -58,14 +58,14 @@ const GenerateLogs = () => {
         return toggleChangeDriverModal();
 
       case FLAG_TYPE.RED_FLAG:
-        driverStore.stopDriverStatsInterval();
+        driverStore.stopDriverStatsInterval(false);
         fuelStore.stopFuelTimer();
         toggleActionModal();
         showSuccessMsg();
         return raceStore.generateLogs(FLAG_TYPE.RED_FLAG);
         
       case FLAG_TYPE.GREEN_FLAG:
-        driverStore.startDriverStatsInterval();
+        driverStore.restartDriverOnGreenFlag();
         fuelStore.startFuelTimer();
         showSuccessMsg();
         return raceStore.generateLogs(FLAG_TYPE.GREEN_FLAG);
