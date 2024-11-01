@@ -200,7 +200,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexWrap: 'wrap',
     justifyContent: 'center',
-    gap: 10
+    gap: 10,
+    paddingVertical:10
   }
 
 

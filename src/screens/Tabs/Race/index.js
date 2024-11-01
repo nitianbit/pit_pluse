@@ -1,42 +1,38 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
-import { DriverTimer, FuelTimer, GenerateLogs, Layout, RaceTimer, ThemeText } from '../../../components';
-import { FlagDotted, FuelIcon } from '../../../assets/svgs';
-import useTimer from '../../../hooks/useTimer';
-import { formatTime } from '../../../utils/helper';
-import { COLORS, RACE_STATUS } from '../../../utils/constants';
-import scheduleService from '../../../services/schedule';
-import ProgressBar from '../../../components/ProgressBar';
-import raceStore from '../../../store/RaceStore';
 import { observer } from 'mobx-react-lite';
-import stintStore from '../../../store/StintStore';
+import React from 'react';
+import { FlatList, ScrollView, StyleSheet, View } from 'react-native';
+import { DriverTimer, FuelTimer, GenerateLogs, Layout, RaceTimer, ThemeText } from '../../../components';
+import raceStore from '../../../store/RaceStore';
 
 
 
 const RaceApp = () => {
   const { data } = raceStore;
 
- 
+
   return (
     <Layout style={styles.container}>
-      {/* Race and Fuel Timers */}
-      <View style={styles.timerContainer}>
+      <ScrollView bounces={false}>
+        <>
+          {/* Race and Fuel Timers */}
+          <View style={styles.timerContainer}>
 
-       <RaceTimer />
-       <FuelTimer />
+            <RaceTimer />
+            <FuelTimer />
 
-      </View>
+          </View>
 
-     <ThemeText text='Drivers' style={styles.title} />
+          <ThemeText text='Drivers' style={styles.title} />
 
-      {/* Race Participants */}
-      <FlatList
-        // data={data?.drivers}
-        data={[...data?.drivers]}
-        keyExtractor={(item,index) => index.toString()}
-        renderItem={({ item, index }) => <DriverTimer key={index} driver={item} driverId={index} />}
-        bounces={false}
-      />
+          {/* Race Participants */}
+          {
+            [...data?.drivers??[]]?.map((driver,index)=>(
+              <DriverTimer key={index} driver={driver} driverId={index} />
+            ))
+          }
+        </>
+
+      </ScrollView>
 
       <GenerateLogs />
 
@@ -53,12 +49,12 @@ const styles = StyleSheet.create({
   },
   timerContainer: {
     marginBottom: 20,
-  }, 
+  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 10,
-    textAlign:'center'
+    textAlign: 'center'
   },
 
 
