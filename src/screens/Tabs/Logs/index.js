@@ -26,7 +26,7 @@ function formatTimeLeft(totalSeconds) {
 
   // return `${hours}h ${minutes}m ${seconds}s`;
 }
-
+const rowStyle =(index) => index % 2 === 0 ? styles.rowEven : styles.rowOdd;
 
 const Logs = () => {
  const {logs}= raceStore;
@@ -40,7 +40,7 @@ const Logs = () => {
         <Text style={[styles.headerText,{color:t.colors.text}]}>Driver</Text>
         <Text style={[styles.headerText,{color:t.colors.text}]}>Race Time Left</Text>
         <Text style={[styles.headerText,{color:t.colors.text}]}>Fuel Time Left</Text>
-        <Text style={[styles.headerText,{color:t.colors.text}]}>Event</Text>
+        <Text style={[styles.headerText,{color:t.colors.text,flex:2}]}>Event</Text>
         <Text style={[styles.headerText,{color:t.colors.text}]}>Time</Text>
       </View>
 
@@ -53,14 +53,14 @@ const Logs = () => {
       </View> */}
 
       {/* Scrollable Table Rows */}
-      <ScrollView style={styles.scrollContainer}>
+      <ScrollView style={styles.scrollContainer} bounces={false}>
         {logs.length > 0 ? (
           logs.map((log, index) => (
-            <View key={index} style={styles.tableRow}>
+            <View key={index} style={[styles.tableRow,rowStyle(index)]}>
               <ThemeText style={styles.cellText} text={log.currentDriver} /> 
               <ThemeText style={styles.cellText} text={formatTimeLeft(log.timeLeftForRace??0)} /> 
               <ThemeText style={styles.cellText} text={formatTimeLeft(log.timeLeftForFuel??0)} /> 
-              <ThemeText style={styles.cellText} text={log.event || 'N/A'} /> 
+              <ThemeText style={styles.eventText} text={log.event || 'N/A'} /> 
               <ThemeText style={styles.cellText} text={moment.unix(log.currentTime).format('hh:mm A')}/> 
             </View>
           ))
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
   tableHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 10,
+    // paddingHorizontal: 10,
     paddingVertical: 10,
     // backgroundColor: '#f2f2f2',
     borderBottomWidth: 1,
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontWeight: 'bold',
-    fontSize: 16,
+    fontSize: 15,
     flex: 1,
     textAlign: 'center',
   },
@@ -107,16 +107,24 @@ const styles = StyleSheet.create({
   tableRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    borderBottomWidth: 1,
+    // paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderBottomWidth: 0.5,
     borderBottomColor: '#ddd',
   },
   cellText: {
     fontSize: 14,
     flex: 1,
     textAlign: 'center',
-    paddingVertical:10
+    paddingVertical:10,
+    fontWeight:'500'
+  },
+  eventText: {
+    fontSize: 14,
+    flex: 2,
+    textAlign: 'center',
+    paddingVertical:10,
+    fontWeight:'500',
   },
   noLogsText: {
     textAlign: 'center',
@@ -124,4 +132,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#999',
   },
+  rowOdd: {
+    backgroundColor: '#464646'
+ },
+ rowEven: {
+   backgroundColor: '#656565',  
+ },
 });
