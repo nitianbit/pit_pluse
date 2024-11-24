@@ -25,7 +25,7 @@ const DriverTimer = (props) => {
 
     return (
         <View style={[styles.participantRow, driverId === currentDriver && styles.selectedDriver]}>
-            <ProgressBar time={value} fillColor='#999' fillPercent={filledPercentage} >
+            <ProgressBar time={value} fillColor={driverId === currentDriver?'#4A90E2':'#999'} fillPercent={100} /* fillPercent={filledPercentage} */ >
                 <Text style={styles.participantName}>{driver.name?driver.name:`Driver ${driverId+1}`}</Text>
             </ProgressBar>
         </View>
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
         width: '65%'
     },
     selectedDriver: {
-        backgroundColor: '#28A745',
+        backgroundColor: '#4A90E2',
         padding: 3,
         borderRadius: 10,
     },
