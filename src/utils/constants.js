@@ -148,3 +148,17 @@ export const DEFAULT_STATS_DATA= {
 //     greenFlag:false,
 // },
 // logs:[]
+
+
+
+
+export const NOTIFICATION_TYPE = {
+  race15Min: 'race15Min',
+  race10Min: 'race10Min',
+  race5Min: 'race5Min',
+  raceEnd: 'raceEnd',
+  fuel15Min: 'fuel15Min',
+  fuel10Min: 'fuel10Min',
+  fuel5Min: 'fuel5Min',
+  fuelEnd: 'fuelEnd',
+};

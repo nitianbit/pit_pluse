@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { DEFAULT_STATS_DATA, DEFAULT_RACE_DATA, RACE_STATUS, FLAG_TYPE } from "../utils/constants";
+import { DEFAULT_STATS_DATA, DEFAULT_RACE_DATA, RACE_STATUS, FLAG_TYPE, NOTIFICATION_TYPE } from "../utils/constants";
 import storageService from "../services/Storage";
 import { STORAGE_KEYS } from "../services/Storage/constants";
 import moment, { duration } from "moment";
@@ -101,7 +101,7 @@ class RaceStore {
         //schedule notification
         const elapsedTime = moment().unix() - this.raceStats.startTime
         const remainingTime = this.raceStats.duration - elapsedTime;
-        NotificationService.scheduleNotification('Race Ended', 'Race Completed', moment().unix() + remainingTime);
+        this.createNotification(remainingTime);
         
 
         // Start the interval to update durationCovered based on elapsed time since startTime
@@ -352,6 +352,30 @@ class RaceStore {
             
         }
     }
+
+    createNotification = (remainingTime) => {
+        try {
+            //0 mins
+            if (remainingTime > 0) {
+                NotificationService.scheduleNotification('Race Ended', 'Race Completed', moment().unix() + remainingTime);
+            }
+            //5 mins
+            if (remainingTime > 5 * 60) {
+                NotificationService.scheduleNotification('5 mins to Race End', '5 mins remaining for Race to end', moment().unix() + 5 * 60, NOTIFICATION_TYPE.race5Min);
+            }
+            //10 mins
+            if (remainingTime > 10 * 60) {
+                NotificationService.scheduleNotification('10 mins to Race End', '10 mins remaining for Race to end', moment().unix() + 10 * 60, NOTIFICATION_TYPE.race10Min);
+            }
+            //15 mins
+            if (remainingTime > 15 * 60) {
+                NotificationService.scheduleNotification('15 mins to Race End', '15 mins remaining for Race to end', moment().unix() + 15 * 60, NOTIFICATION_TYPE.race15Min);
+            }
+        } catch (error) {
+
+        }
+    }
+
 
 }
 

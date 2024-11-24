@@ -2,11 +2,21 @@ import notifee, { AndroidImportance, EventType, TimestampTrigger, TriggerType } 
 import storageService from '../Storage';
 
 const types=['raceNotificationId','fuelNotificationId','driverChangeNotificationId'];
+const notificationKeys = [
+    'race15Min', 'race10Min', 'race5Min', 'raceEnd',
+    'fuel15Min', 'fuel10Min', 'fuel5Min', 'fuelEnd'
+];
 
 class NotificationService {
     raceNotificationId = null;
     fuelNotificationId = null;
     driverChangeNotificationId = null;
+
+    notificationId = notificationKeys.reduce((acc, key) => {
+        acc[key] = null;
+        return acc;
+    }, {});
+    
 
     // Method to display an immediate notification
     static async displayNotification(title, body,type) {
@@ -35,6 +45,7 @@ class NotificationService {
     // Method to schedule a notification at a later time
     static async scheduleNotification(title, body, triggerTime,type) {//passing triggerTime in seconds so change it to milliseconds
         try {
+            console.log(this.notificationId)
             // Create a channel (required for Android)
             const channelId = await notifee.createChannel({
                 id: 'default',
@@ -64,7 +75,8 @@ class NotificationService {
 
             //if previous notification then clear it
             if (type) {
-                this[type] = notificationId;
+                console.log(this.notificationId);
+                this.notificationId[type] = notificationId;
 
                 const prevNotificationId=await this.getNotificationIdFromLocalStorage(type);
                 if(prevNotificationId){

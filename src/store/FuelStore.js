@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction } from "mobx";
 import storageService from "../services/Storage";
 import { STORAGE_KEYS } from "../services/Storage/constants";
 import moment from "moment";
-import { DEFAULT_STATS_DATA, RACE_STATUS } from "../utils/constants";
+import { DEFAULT_STATS_DATA, NOTIFICATION_TYPE, RACE_STATUS } from "../utils/constants";
 import raceStore from "./RaceStore";
 import NotificationService from "../services/notification/NotificationService";
 
@@ -47,9 +47,7 @@ class FuelStore {
         //schedule notification
         const elapsedTime = moment().unix() - (this.fuelStats.startTime??moment().unix());
         const remainingTime = this.fuelStats.fuelDuration-elapsedTime;
-        if(remainingTime>0){
-            NotificationService.scheduleNotification('Fuel Duration','Fuel Timer Exhausted',moment().unix() + remainingTime);
-        }
+        this.createNotification(remainingTime);
 
 
         this.timerInterval = setInterval(() => {
@@ -126,6 +124,30 @@ class FuelStore {
             this.fuelStats = DEFAULT_STATS_DATA.fuel;
             this.timerInterval = null;
         });
+    }
+
+
+    createNotification = (remainingTime) => {
+        try {
+            //0 mins
+            if (remainingTime > 0) {
+                NotificationService.scheduleNotification('Fuel Exhausted', 'Fuel Exhausted', moment().unix() + remainingTime);
+            }
+            //5 mins
+            if (remainingTime > 5 * 60) {
+                NotificationService.scheduleNotification('5 mins to Fuel Exhaust', '5 mins remaining for Fuel to endExhaust', moment().unix() + 5 * 60, NOTIFICATION_TYPE.race5Min);
+            }
+            //10 mins
+            if (remainingTime > 10 * 60) {
+                NotificationService.scheduleNotification('10 mins to Fuel Exhaust', '10 mins remaining for Fuel to Exhaust', moment().unix() + 10 * 60, NOTIFICATION_TYPE.race10Min);
+            }
+            //15 mins
+            if (remainingTime > 15 * 60) {
+                NotificationService.scheduleNotification('15 mins to Fuel Exhaust', '15 mins remaining for Fuel to Exhaust', moment().unix() + 15 * 60, NOTIFICATION_TYPE.race15Min);
+            }
+        } catch (error) {
+
+        }
     }
 }
 
