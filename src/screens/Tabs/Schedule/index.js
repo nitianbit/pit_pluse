@@ -4,22 +4,21 @@ import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { Layout, ThemeText } from '../../../components';
 import scheduleService from '../../../services/schedule';
 import raceStore from '../../../store/RaceStore';
- 
 
-const Schedule = () => { 
-  const {schedule}=raceStore;
 
- 
+const Schedule = () => {
+  const { schedule } = raceStore;
+
 
   const renderRow = ({ item, index }) => {
     const rowStyle = index % 2 === 0 ? styles.rowEven : styles.rowOdd;
 
     return (
-      <View style={[styles.row, rowStyle,item?.type=="stop" && styles.stopRow]}>
-        <Text style={styles.cell}>{item.name}</Text>
-        <Text style={styles.cell}>{(item.startDriveTime.substring(0,5))??""}</Text>
-        <Text style={styles.cell}>{item.endDriveTime?.substring(0,5)??""}</Text>
-        <Text style={styles.cell}>{scheduleService.minutesToTime(item.drivingDuration)?.substring(0,5)??""}</Text>
+      <View style={[styles.row, rowStyle, item?.type == "stop" && styles.stopRow]}>
+        <Text style={styles.cell}>{(item?.type == "stop" ? raceStore.data.stops[item.name]?.name : raceStore.data.drivers[item.name]?.name) ?? item.name}</Text>
+        <Text style={styles.cell}>{(item.startDriveTime.substring(0, 5)) ?? ""}</Text>
+        <Text style={styles.cell}>{item.endDriveTime?.substring(0, 5) ?? ""}</Text>
+        <Text style={styles.cell}>{scheduleService.minutesToTime(item.drivingDuration)?.substring(0, 5) ?? ""}</Text>
         {/* <Text style={styles.cell}>{item.timeLeft}</Text> */}
       </View>
     );
@@ -41,14 +40,14 @@ const Schedule = () => {
           </View>
 
           {/* Table Rows with Vertical Scroll */}
-          {schedule?.schedule?.length?<FlatList
+          {schedule?.schedule?.length ? <FlatList
             // data={raceData}
-            data={schedule?.schedule??[]}
+            data={schedule?.schedule ?? []}
             bounces={false}
             renderItem={renderRow}
             keyExtractor={(item, index) => index.toString()}
 
-          />:(
+          /> : (
             <Text style={styles.noLogsText}>No Schedule available</Text>
           )}
         </View>
@@ -76,10 +75,10 @@ const styles = StyleSheet.create({
     flex: 1,
     fontWeight: 'bold',
     textAlign: 'center',
-    color: '#000', 
-    marginHorizontal:5
+    color: '#000',
+    marginHorizontal: 5
   },
- 
+
   tableContainer: {
     maxHeight: 400, // Set a fixed height to allow vertical scrolling
   },
@@ -87,11 +86,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: 15,
     paddingHorizontal: 5,
-    borderBottomWidth:1,
-    borderColor:'#DCDCDC'
+    borderBottomWidth: 1,
+    borderColor: '#DCDCDC'
   },
   rowOdd: {
-     backgroundColor: '#464646'
+    backgroundColor: '#464646'
   },
   rowEven: {
     backgroundColor: '#656565',  // Example for even rows
@@ -100,7 +99,7 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
     color: '#fff',
-   },
+  },
   title: {
     textAlign: 'center',
     fontSize: 20,
@@ -109,8 +108,8 @@ const styles = StyleSheet.create({
     borderBottomColor: '#999',
     borderBottomWidth: 1
   },
-  stopRow:{
-    backgroundColor:'#4A90E2'
+  stopRow: {
+    backgroundColor: '#4A90E2'
   },
   noLogsText: {
     textAlign: 'center',

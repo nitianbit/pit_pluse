@@ -195,7 +195,8 @@ class ScheduleService {
                     // startDriveTime: this.minutesToTime(startTime),
                     // endDriveTime: this.minutesToTime(startTime + +duration),
                     drivingDuration: duration,
-                    name: `Stop ${i + 1}`,
+                    // name: `Stop ${i + 1}`,
+                    name: i-1,//as we push src as start in start
                     type: 'stop'
                 })
             }
