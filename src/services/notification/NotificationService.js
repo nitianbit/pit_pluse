@@ -11,11 +11,24 @@ class NotificationService {
     raceNotificationId = null;
     fuelNotificationId = null;
     driverChangeNotificationId = null;
+    notificationId = {
+        race15Min: null,
+        race10Min: null,
+        race5Min: null,
+        raceEnd: null,
+        fuel15Min: null,
+        fuel10Min: null,
+        fuel5Min: null,
+        fuelEnd: null
+    };
 
-    notificationId = notificationKeys.reduce((acc, key) => {
-        acc[key] = null;
-        return acc;
-    }, {});
+    constructor() {
+        // this.notificationId = notificationKeys.reduce((acc, key) => {
+        //     acc[key] = null;
+        //     return acc;
+        // }, {});
+    }
+
     
 
     // Method to display an immediate notification
@@ -45,7 +58,12 @@ class NotificationService {
     // Method to schedule a notification at a later time
     static async scheduleNotification(title, body, triggerTime,type) {//passing triggerTime in seconds so change it to milliseconds
         try {
-            console.log(this.notificationId)
+             if(!this.notificationId){
+                this.notificationId = notificationKeys.reduce((acc, key) => {
+                    acc[key] = null;
+                    return acc;
+                }, {});
+            }
             // Create a channel (required for Android)
             const channelId = await notifee.createChannel({
                 id: 'default',
@@ -75,8 +93,7 @@ class NotificationService {
 
             //if previous notification then clear it
             if (type) {
-                console.log(this.notificationId);
-                this.notificationId[type] = notificationId;
+                 this.notificationId[type] = notificationId;
 
                 const prevNotificationId=await this.getNotificationIdFromLocalStorage(type);
                 if(prevNotificationId){

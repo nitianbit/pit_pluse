@@ -355,21 +355,22 @@ class RaceStore {
 
     createNotification = (remainingTime) => {
         try {
+            console.log('remainingTime', remainingTime);
             //0 mins
             if (remainingTime > 0) {
                 NotificationService.scheduleNotification('Race Ended', 'Race Completed', moment().unix() + remainingTime);
             }
             //5 mins
             if (remainingTime > 5 * 60) {
-                NotificationService.scheduleNotification('5 mins to Race End', '5 mins remaining for Race to end', moment().unix() + 5 * 60, NOTIFICATION_TYPE.race5Min);
+                NotificationService.scheduleNotification('5 mins to Race End', '5 mins remaining for Race to end', moment().unix() + (remainingTime - 5 * 60), NOTIFICATION_TYPE.race5Min);
             }
             //10 mins
             if (remainingTime > 10 * 60) {
-                NotificationService.scheduleNotification('10 mins to Race End', '10 mins remaining for Race to end', moment().unix() + 10 * 60, NOTIFICATION_TYPE.race10Min);
+                NotificationService.scheduleNotification('10 mins to Race End', '10 mins remaining for Race to end', moment().unix() +  (remainingTime - 10 * 60), NOTIFICATION_TYPE.race10Min);
             }
             //15 mins
             if (remainingTime > 15 * 60) {
-                NotificationService.scheduleNotification('15 mins to Race End', '15 mins remaining for Race to end', moment().unix() + 15 * 60, NOTIFICATION_TYPE.race15Min);
+                NotificationService.scheduleNotification('15 mins to Race End', '15 mins remaining for Race to end', moment().unix() +  (remainingTime - 15 * 60), NOTIFICATION_TYPE.race15Min);
             }
         } catch (error) {
 

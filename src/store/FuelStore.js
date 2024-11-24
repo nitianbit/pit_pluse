@@ -135,15 +135,15 @@ class FuelStore {
             }
             //5 mins
             if (remainingTime > 5 * 60) {
-                NotificationService.scheduleNotification('5 mins to Fuel Exhaust', '5 mins remaining for Fuel to endExhaust', moment().unix() + 5 * 60, NOTIFICATION_TYPE.race5Min);
+                NotificationService.scheduleNotification('5 mins to Fuel Exhaust', '5 mins remaining for Fuel to endExhaust', moment().unix() + (remainingTime - 5 * 60), NOTIFICATION_TYPE.race5Min);
             }
             //10 mins
             if (remainingTime > 10 * 60) {
-                NotificationService.scheduleNotification('10 mins to Fuel Exhaust', '10 mins remaining for Fuel to Exhaust', moment().unix() + 10 * 60, NOTIFICATION_TYPE.race10Min);
+                NotificationService.scheduleNotification('10 mins to Fuel Exhaust', '10 mins remaining for Fuel to Exhaust', moment().unix() + (remainingTime - 10 * 60), NOTIFICATION_TYPE.race10Min);
             }
             //15 mins
             if (remainingTime > 15 * 60) {
-                NotificationService.scheduleNotification('15 mins to Fuel Exhaust', '15 mins remaining for Fuel to Exhaust', moment().unix() + 15 * 60, NOTIFICATION_TYPE.race15Min);
+                NotificationService.scheduleNotification('15 mins to Fuel Exhaust', '15 mins remaining for Fuel to Exhaust', moment().unix() + (remainingTime - 15 * 60), NOTIFICATION_TYPE.race15Min);
             }
         } catch (error) {
 
