@@ -30,7 +30,7 @@ class FuelStore {
         const currentTime = moment().unix();
         
         //if no startTime then set startTime else in case of reload or app open will use the last saved startTime (already done in loadFuelData)
-        if (!this.fuelStats.startTime) {
+        if (!this.fuelStats?.startTime) {
             runInAction(() => {
                 this.fuelStats.startTime = currentTime;
             });

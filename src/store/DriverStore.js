@@ -102,11 +102,10 @@ class DriverStore {
             const currentTime = moment().unix();
 
             runInAction(() => {
-                //TODO this is crashing
-                if (!this.driverStats.stats[this.driverStats.currentDriver]?.startTime) {
+                 if (this.driverStats.stats[this.driverStats.currentDriver] &&!this.driverStats.stats[this.driverStats.currentDriver]?.startTime) {
                     this.driverStats.stats[this.driverStats.currentDriver].startTime = currentTime;
                 }
-                const elapsedTime = currentTime - this.driverStats.stats[this.driverStats.currentDriver].startTime;
+                const elapsedTime = currentTime - this.driverStats.stats[this.driverStats.currentDriver]?.startTime;
                 this.updateDriverStats(this.driverStats.currentDriver, elapsedTime, elapsedTime);
             });
 
@@ -128,7 +127,7 @@ class DriverStore {
         //only change current driver
         this.driverStats.currentDriver = driverId;
         //update prev currentDriver startTime
-        if(driverId && this.driverStats.stats[driverId]){
+        if(![null,undefined].includes(driverId) && this.driverStats.stats[driverId]){
             this.driverStats.stats[driverId].startTime = moment().unix()-this.driverStats.stats[driverId].durationCovered??0;
         }
     }
