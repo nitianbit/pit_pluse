@@ -1,23 +1,37 @@
 import React, { useEffect } from 'react'
-import { StyleSheet, Text, TouchableOpacity } from 'react-native'
+import { Image, StyleSheet, Text, TouchableOpacity } from 'react-native'
 import Layout from '../../components/Layout'
 import { DIMENSIONS } from '../../utils/constants'
 import { useNavigation, useTheme } from '@react-navigation/native';
 import { ThemeText } from '../../components';
 import { NavName } from '../../navigation/constants';
+import { SplashLogoGIF } from '../../assets/logo';
 const Splash = () => {
     const { colors } = useTheme();
     const navigation=useNavigation();
     
     useEffect(()=>{
-      setTimeout(()=>{
-        navigation.navigate(NavName.HOME)
-      }, 1000)
+      // setTimeout(()=>{
+      //   navigation.navigate(NavName.HOME)
+      // }, 1000)
     },[])
 
     return (
         <Layout style={styles.layout}>
-            <ThemeText text='Pit Pulse' style={styles.title} />
+            <Image
+            style={{ width: "100%", height: "100%" }}
+            source={SplashLogoGIF}
+            resizeMode='cover'
+ 
+            onLoadEnd={() => {
+              console.log("load end")
+              setTimeout(() => {
+                  navigation.navigate(NavName.HOME)
+                }, 3000);
+                
+            }}
+          />
+
 
         </Layout>
     )

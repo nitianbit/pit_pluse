@@ -4,10 +4,12 @@ import ProgressBar from '../ProgressBar'
 import raceStore from '../../store/RaceStore';
 import { observer } from 'mobx-react-lite';
 import { FlagDotted } from '../../assets/svgs';
+import themeService from '../../store/themeStore';
 
 const RaceTimer = () => {
     const { raceStats } = raceStore;
     const { duration, durationCovered } = (raceStats ?? {});//trip duration 
+    const { themeConfig } = themeService
 
     const getFilledValue = () => {
         const totalDuration = duration ;
@@ -25,8 +27,8 @@ const RaceTimer = () => {
     return (
         <>
             {/* Progress Bar */}
-            <ProgressBar time={remainingTime} fillColor='#4A90E2' fillPercent={filledPercentage} style={{ marginBottom: 20 }} >
-                <FlagDotted />
+            <ProgressBar time={remainingTime} fillColor={themeConfig.dark_blue} fillPercent={filledPercentage} style={{ marginBottom: 20 }} >
+                <FlagDotted fill={themeConfig.text}/>
             </ProgressBar>
         </>
     )

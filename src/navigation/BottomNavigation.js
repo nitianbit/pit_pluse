@@ -12,6 +12,7 @@ import {
 import { Race, Reset, Schedule, Setup, Logs } from '../screens';
 import { COLORS } from '../utils/constants';
 import { NavName } from './constants';
+import LogsIcon from '../assets/svgs/LogsIcon';
 
 const Tab = createBottomTabNavigator();
 
@@ -31,7 +32,7 @@ const data = [
     {
         name: NavName.STINT,
         title: 'Logs',
-        Icon: TimerSvg,
+        Icon: LogsIcon,
         component: Logs
     },
     {

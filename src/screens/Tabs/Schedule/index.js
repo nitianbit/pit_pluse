@@ -4,22 +4,23 @@ import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { Layout, ThemeText } from '../../../components';
 import scheduleService from '../../../services/schedule';
 import raceStore from '../../../store/RaceStore';
+import themeService from '../../../store/themeStore';
 
 
 const Schedule = () => {
   const { schedule } = raceStore;
+  const { themeConfig } = themeService;
 
 
   const renderRow = ({ item, index }) => {
-    const rowStyle = index % 2 === 0 ? styles.rowEven : styles.rowOdd;
+    const rowStyle = { backgroundColor: index % 2 === 0 ? themeConfig.dark_blue : themeConfig.light_blue };
 
     return (
       <View style={[styles.row, rowStyle, item?.type == "stop" && styles.stopRow]}>
-        <Text style={styles.cell}>{(item?.type == "stop" ? raceStore.data.stops[item.name]?.name : raceStore.data.drivers[item.name]?.name) ?? item.name}</Text>
-        <Text style={styles.cell}>{(item.startDriveTime.substring(0, 5)) ?? ""}</Text>
-        <Text style={styles.cell}>{item.endDriveTime?.substring(0, 5) ?? ""}</Text>
-        <Text style={styles.cell}>{scheduleService.minutesToTime(item.drivingDuration)?.substring(0, 5) ?? ""}</Text>
-        {/* <Text style={styles.cell}>{item.timeLeft}</Text> */}
+        <Text style={[styles.cell, { color: themeConfig.text }]}>{(item?.type == "stop" ? raceStore.data.stops[item.name]?.name : raceStore.data.drivers[item.name]?.name) ?? item.name}</Text>
+        <Text style={[styles.cell, { color: themeConfig.text }]}>{(item.startDriveTime.substring(0, 5)) ?? ""}</Text>
+        <Text style={[styles.cell, { color: themeConfig.text }]}>{item.endDriveTime?.substring(0, 5) ?? ""}</Text>
+        <Text style={[styles.cell, { color: themeConfig.text }]}>{scheduleService.minutesToTime(item.drivingDuration)?.substring(0, 5) ?? ""}</Text>
       </View>
     );
   };
@@ -32,10 +33,10 @@ const Schedule = () => {
         <View style={styles.container}>
 
           <View style={styles.header}>
-            <Text style={styles.headerText}>Driver</Text>
-            <Text style={styles.headerText}>Start Time</Text>
-            <Text style={styles.headerText}>End Time</Text>
-            <Text style={styles.headerText}>Duration</Text>
+            <Text style={[styles.headerText,{ color: themeConfig.text }]}>Driver</Text>
+            <Text style={[styles.headerText,{ color: themeConfig.text }]}>Start Time</Text>
+            <Text style={[styles.headerText,{ color: themeConfig.text }]}>End Time</Text>
+            <Text style={[styles.headerText,{ color: themeConfig.text }]}>Duration</Text>
             {/* <Text style={styles.headerText}>Time Left</Text> */}
           </View>
 
@@ -65,7 +66,7 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    backgroundColor: '#fff',
+    // backgroundColor: '#fff',
     paddingVertical: 10,
     borderBottomWidth: 1,
     borderColor: '#ddd',
@@ -88,12 +89,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     borderBottomWidth: 1,
     borderColor: '#DCDCDC'
-  },
-  rowOdd: {
-    backgroundColor: '#464646'
-  },
-  rowEven: {
-    backgroundColor: '#656565',  // Example for even rows
   },
   cell: {
     flex: 1,

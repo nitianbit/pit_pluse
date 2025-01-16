@@ -105,8 +105,14 @@ const handlePitStopClick=()=>{
 }
 
 const onRaceStart=()=>{
-  raceStore.startRace(true)
+  // raceStore.startRace(true) //do not start race wait for driver allocation and then start race
   raiseFlag(FLAG_TYPE.DRIVER_CHANGE)
+}
+
+const onDriverChangeCallback=()=>{
+  if(status == RACE_STATUS.NOT_STARTED){
+    raceStore.startRace(true)
+  }
 }
 
 
@@ -160,7 +166,13 @@ const onRaceStart=()=>{
       </CenteredModal>
 
       <PitStop onSelect={onSelect} visible={pitStopModal} toggleVisible={togglePitStopModal}/>
-      <DriverChangePopup flagKind={flagKind} currentDriver={currentDriver} visible={changeDriverModal} toggleVisible={toggleChangeDriverModal} />
+      <DriverChangePopup
+        flagKind={flagKind}
+        currentDriver={currentDriver}
+        visible={changeDriverModal}
+        toggleVisible={toggleChangeDriverModal}
+        onDriverChangeCallback={onDriverChangeCallback}
+      />
 
     </>
   )

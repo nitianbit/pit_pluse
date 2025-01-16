@@ -2,16 +2,18 @@ import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import ThemeText from '../ThemeText'
 import { formatTime } from '../../utils/helper'
+import themeService from '../../store/themeStore'
 
 const ProgressBar = ({ time, children, fillColor, fillPercent = '100',style={} }) => {
     const customStyle=StyleSheet.flatten([styles.timerBox,style])
+    const {themeConfig}=themeService
     return (
         <View style={customStyle}>
             {/* <View style={[styles.fill, { width: `${raceProgress}%`, backgroundColor: '#4A90E2' }]} /> */}
             <View style={[styles.fill, { width: `${fillPercent}%`, backgroundColor: fillColor }]} />
             <View style={styles.contentContainer}>
                 {children}
-                <Text style={styles.timerText}>{formatTime(time)}</Text>
+                <Text style={[styles.timerText,{color:themeConfig.text}]}>{formatTime(time)}</Text>
             </View>
         </View>
     )
@@ -26,7 +28,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         justifyContent: 'center',
         overflow: 'hidden', // Ensure the fill doesn't overflow outside the box
-        backgroundColor: '#333', // Background for the timer box,
+        backgroundColor: '#ccc', // Background for the timer box,
 
     },
     fill: {

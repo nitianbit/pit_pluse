@@ -3,11 +3,13 @@ import React from 'react'
 import ProgressBar from '../ProgressBar'
 import driverStore from '../../store/DriverStore'
 import { observer } from 'mobx-react-lite'
+import themeService from '../../store/themeStore'
 
 const DriverTimer = (props) => {
     const { driver, driverId } = props;
     const { driverStats } = driverStore;
     const { currentDriver, stats } = driverStats;
+    const { themeConfig } = themeService;
 
     const getFilledValue = () => {
         const totalDuration = stats[driverId]?.totalDrivingDuration ?? 0;
@@ -17,16 +19,16 @@ const DriverTimer = (props) => {
         return {
             filledPercentage: (filledValue / totalDuration) * 100,
             remainingTime: remainingTime > 0 ? remainingTime : 0,
-            value:filledValue
+            value: filledValue
         };
     }
 
-    const { filledPercentage, remainingTime ,value} = getFilledValue();
+    const { filledPercentage, remainingTime, value } = getFilledValue();
 
     return (
         <View style={[styles.participantRow, driverId === currentDriver && styles.selectedDriver]}>
-            <ProgressBar time={value} fillColor={driverId === currentDriver?'#4A90E2':'#999'} fillPercent={100} /* fillPercent={filledPercentage} */ >
-                <Text style={styles.participantName}>{driver.name?driver.name:`Driver ${driverId+1}`}</Text>
+            <ProgressBar time={value} fillColor={driverId === currentDriver ? themeConfig.dark_blue : '#ccc'} fillPercent={100} /* fillPercent={filledPercentage} */ >
+                <Text style={[styles.participantName, { color: themeConfig.text }]}>{driver.name ? driver.name : `Driver ${driverId + 1}`}</Text>
             </ProgressBar>
         </View>
     )
@@ -49,8 +51,8 @@ const styles = StyleSheet.create({
         width: '65%'
     },
     selectedDriver: {
-        backgroundColor: '#4A90E2',
-        padding: 3,
+        // backgroundColor: '#4A90E2',
+        // padding: 3,
         borderRadius: 10,
     },
 })

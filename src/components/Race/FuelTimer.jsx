@@ -4,10 +4,12 @@ import { observer } from 'mobx-react-lite'
 import { FuelIcon } from '../../assets/svgs';
 import ProgressBar from '../ProgressBar';
 import fuelStore from '../../store/FuelStore';
+import themeService from '../../store/themeStore';
 
 const FuelTimer = () => {
     const { fuelStats } = fuelStore;
     const { durationCovered, fuelDuration } = fuelStats
+    const { themeConfig } = themeService;
 
     const getFilledValue = () => {
         const remainingTime = fuelDuration - durationCovered;
@@ -22,8 +24,8 @@ const FuelTimer = () => {
  
     return (
         <>
-            <ProgressBar time={remainingTime} fillColor='#FF5A5F' fillPercent={filledPercentage} style={{ marginBottom: 20 }} >
-                <FuelIcon />
+            <ProgressBar time={remainingTime} fillColor={themeConfig.light_blue} fillPercent={filledPercentage} style={{ marginBottom: 20 }} >
+                <FuelIcon fill={themeConfig.text}/>
             </ProgressBar>
         </>
     )

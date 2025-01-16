@@ -12,13 +12,19 @@ import themeService, { THEME } from '../store/themeStore';
 
 
 const Stack = createStackNavigator();
-
+const WhiteTheme = {
+    ...DefaultTheme,
+    colors: {
+      ...DefaultTheme.colors,
+      background: "white",
+    },
+  };
 
 const Routes = (props) => {
     const scheme = useColorScheme();
     // const MyTheme = scheme === 'dark' ? DarkTheme : DefaultTheme;
     const { currentTheme } = themeService;
-    const MyTheme = currentTheme === THEME.DARK ? DarkTheme : DefaultTheme;
+    const MyTheme = currentTheme === THEME.DARK ? DarkTheme : WhiteTheme;
 
 
     return (

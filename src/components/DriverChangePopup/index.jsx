@@ -12,7 +12,7 @@ import { CheckIcon } from '../../assets/svgs'
 import fuelStore from '../../store/FuelStore'
 
 
-const DriverChangePopup = ({ visible, toggleVisible, currentDriver, flagKind = 2 }) => {
+const DriverChangePopup = ({ visible, toggleVisible, currentDriver, flagKind = 2,onDriverChangeCallback=()=>{} }) => {
     const theme = useThemeColor();
     const { data } = raceStore;
     const [driverSeleted, setDriverSelected] = React.useState(null);
@@ -46,6 +46,7 @@ const DriverChangePopup = ({ visible, toggleVisible, currentDriver, flagKind = 2
             } else {
                 //only driver change
                 driverStore.changeCurrentDriver(driverSeleted);
+                onDriverChangeCallback();//to start race
                 raceStore.generateLogs(FLAG_TYPE.DRIVER_CHANGE);
             }
             showSuccessMsg();

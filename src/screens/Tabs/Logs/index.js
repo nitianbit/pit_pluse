@@ -7,6 +7,7 @@ import moment from 'moment'
 import raceStore from '../../../store/RaceStore'
 import { observer } from 'mobx-react-lite'
 import { useTheme } from '@react-navigation/native'
+import themeService from '../../../store/themeStore'
 
 function formatTimeLeft(totalSeconds) {
   const hours = Math.floor(totalSeconds / 3600);
@@ -26,11 +27,13 @@ function formatTimeLeft(totalSeconds) {
 
   // return `${hours}h ${minutes}m ${seconds}s`;
 }
-const rowStyle =(index) => index % 2 === 0 ? styles.rowEven : styles.rowOdd;
 
 const Logs = () => {
- const {logs}= raceStore;
- const t=useTheme();
+  const {logs}= raceStore;
+  const t=useTheme();
+  const {themeConfig}=themeService;
+  
+  const rowStyle =(index) => ({backgroundColor: index % 2 === 0 ? themeConfig.dark_blue : themeConfig.light_blue});
 
   return (
     <SafeAreaView style={styles.container}>
@@ -57,7 +60,7 @@ const Logs = () => {
         {logs.length > 0 ? (
           logs.map((log, index) => (
             <View key={index} style={[styles.tableRow,rowStyle(index)]}>
-              <ThemeText style={styles.cellText} text={log.currentDriver} /> 
+              <ThemeText style={[styles.cellText,{color:themeConfig.text}]} text={log.currentDriver} /> 
               <ThemeText style={styles.cellText} text={formatTimeLeft(log.timeLeftForRace??0)} /> 
               <ThemeText style={styles.cellText} text={formatTimeLeft(log.timeLeftForFuel??0)} /> 
               <ThemeText style={styles.eventText} text={log.event || 'N/A'} /> 
@@ -110,6 +113,8 @@ const styles = StyleSheet.create({
     // paddingHorizontal: 10,
     borderBottomWidth: 0.5,
     borderBottomColor: '#ddd',
+    paddingVertical:8,
+    paddingHorizontal:5
   },
   cellText: {
     fontSize: 14,
