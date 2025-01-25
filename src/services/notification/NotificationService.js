@@ -43,7 +43,7 @@ class NotificationService {
             // Display a notification
             const notificationId = await notifee.displayNotification({
                 title: title,
-                body: body,
+                // body: body,//hide body for now
                 android: {
                     channelId,
                     smallIcon: 'ic_launcher', // Ensure you have this icon in the drawable folder
@@ -82,7 +82,7 @@ class NotificationService {
             const notificationId = await notifee.createTriggerNotification(
                 {
                     title: title,
-                    body: body,
+                    // body: body,
                     android: {
                         channelId,
                         smallIcon: 'ic_launcher', // Replace with your app's icon

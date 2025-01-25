@@ -6,6 +6,9 @@ import { useNavigation, useTheme } from '@react-navigation/native';
 import { ThemeText } from '../../components';
 import { NavName } from '../../navigation/constants';
 import { SplashLogoGIF } from '../../assets/logo';
+import FastImage from 'react-native-fast-image';
+
+
 const Splash = () => {
     const { colors } = useTheme();
     const navigation=useNavigation();
@@ -17,23 +20,22 @@ const Splash = () => {
     },[])
 
     return (
-        <Layout style={styles.layout}>
-            <Image
+        <>
+            <FastImage
             style={{ width: "100%", height: "100%" }}
             source={SplashLogoGIF}
             resizeMode='cover'
- 
             onLoadEnd={() => {
               console.log("load end")
               setTimeout(() => {
                   navigation.navigate(NavName.HOME)
-                }, 3000);
+                }, 2500);
                 
             }}
           />
 
 
-        </Layout>
+        </>
     )
 }
 

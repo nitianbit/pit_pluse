@@ -87,11 +87,12 @@ const Setup = () => {
                   value={data?.duration}
                   maximumValue={24}
                   step={1} //hour wise
-                  onSlidingComplete={(value) => raceStore.updateData('duration', value[0])}
+                  // onSlidingComplete={(value) => raceStore.updateData('duration', value[0])}
                   minimumTrackStyle={{ backgroundColor: COLORS.BOTTOM_ACTIVE_COLOR }}
                   maximumTrackStyle={{ backgroundColor: COLORS.PRIMARY }}
                   // thumbTintColor={COLORS.LIGHT}
                   containerStyle={styles.slider}
+                  onValueChange={(value) => raceStore.updateData('duration', value[0])}
                 />
                 <ThemeText style={[styles.value]} text={`${data?.duration}h`} />
               </View>
@@ -159,9 +160,9 @@ const Setup = () => {
               {data?.stops?.map((item, index) => (
                 <View style={[styles.labelContainer, styles.items]} key={index}>
                   {/* <ThemeText key={index} style={styles.label} text={item?.name} /> */}
-                  <ThemedInput placeholder='Stop Name' style={styles.input} value={item?.name} onChangeText={(text) => raceStore.updateStopsData(index, 'name', text)} />
+                  <ThemedInput placeholder='Stop Name' style={[styles.input]} value={item?.name} onChangeText={(text) => raceStore.updateStopsData(index, 'name', text)} />
                   <Button title={moment(item?.start).format('HH:mm')} onPress={() => openModal(MODAL_TYPE.SERVICE_STOP_TIME, true, index)} />
-                  <ThemedInput placeholder='Duration (min)' keyboardType='numeric' style={styles.input} value={item?.duration ?? ""} onChangeText={(text) => raceStore.updateStopsData(index, 'duration', text)} />
+                  <ThemedInput placeholder='Duration (min)' keyboardType='numeric' style={[styles.input,{textAlign:'center'}]} value={item?.duration ?? ""} onChangeText={(text) => raceStore.updateStopsData(index, 'duration', text)} />
                   <ThemeText key={index} style={styles.label} text={item?.time} />
                 </View>
               ))}
@@ -241,7 +242,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 8,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    paddingHorizontal: 18,
+    paddingHorizontal: 8,
     display: 'flex',
     justifyContent: 'space-between',
     width: '100%',
@@ -262,10 +263,10 @@ const styles = StyleSheet.create({
     gap: 10
   },
   label: {
-    fontSize: 18,
+    fontSize: 17,
   },
   value: {
-    fontSize: 18,
+    fontSize: 17,
   },
   title: {
     fontSize: 20,
