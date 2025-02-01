@@ -1,80 +1,5 @@
-// let currentDriver = 0;
 
 import moment, { duration } from "moment";
-
-// class Schedule {
-//     constructor(name, startDriveTime, endDriveTime, drivingDuration) {
-//         this.name = name;
-//         this.startDriveTime = startDriveTime;
-//         this.endDriveTime = endDriveTime;
-//         this.drivingDuration = drivingDuration;
-//     }
-// }
-
-// function timeToMinutes(time) {
-//     let [hours, minutes] = time.split(':').map(Number); // Use ':' to split hours and minutes
-//     return hours * 60 + minutes;
-// }
-
-// function minutesToTime(minutes) {
-//     let hours = Math.floor(minutes / 60);
-//     let mins = minutes % 60;
-//     return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`; // Pad with leading 0
-// }
-
-// function getDuration(startTime, endTime) {
-//     let startMinutes = timeToMinutes(startTime);
-//     let endMinutes = timeToMinutes(endTime);
-
-//     // If endTime is earlier than startTime, assume it wraps over to the next day
-//     if (endMinutes < startMinutes) {
-//         endMinutes += 24 * 60; // Add 24 hours' worth of minutes to endTime
-//     }
-
-//     return endMinutes - startMinutes;
-// }
-
-// function getNumberOfDrivers(startTime, endTime, fuelTime) {
-//     let totalStintDuration = getDuration(startTime, endTime);
-//     let fuelTimeInMinutes = fuelTime; // You can pass fuelTime directly as minutes 
-//     return Math.ceil(totalStintDuration / fuelTimeInMinutes);
-// }
-
-// export const getSchedule=(startTime, endTime, fuelTime, totalDrivers)=> {//23:00,22:59,81,5
-//     let numberOfDrivers = getNumberOfDrivers(startTime, endTime, fuelTime);//18 //total driver shift required
-//     let stintSchedule = [];
-//     let totalDuration = getDuration(startTime, endTime);//1440 //total trip duration
-//     let drivingDuration = totalDuration / numberOfDrivers;//80 //driving duration per driver
-
-//     let startMinutes = timeToMinutes(startTime);//23*60=1380 //start time to mins
-
-//     for (let i = 0; i < numberOfDrivers; i++) {
-//         let driverOfStint = currentDriver % totalDrivers;
-
-//         let endMinutes = startMinutes + drivingDuration;
-
-//         stintSchedule.push(new Schedule(
-//             driverOfStint,
-//             minutesToTime(startMinutes),
-//             minutesToTime(endMinutes),
-//             drivingDuration // Convert duration to hours
-//         ));
-
-//         startMinutes = endMinutes; // Update start time for the next stint
-//         currentDriver++;
-//     }
-
-//     // Print the schedule
-//     stintSchedule.forEach(current => {
-//         console.log(`${current.name}, ${current.startDriveTime}, ${current.endDriveTime}, ${current.drivingDuration} minutes`);
-//     });
-// }
-
-// // Example Usage
-// // getSchedule("10:00", "14:00", 92, 3);  // startTime, endTime, fuelTime in minute, TotalDrivers
-
-
-
 
 class Schedule {
     constructor(name, startDriveTime, endDriveTime, drivingDuration) {
@@ -101,7 +26,7 @@ class ScheduleService {
     // Helper function to convert total minutes to time (HH:MM)
     minutesToTime(minutes) {
         minutes = Math.floor(minutes);
-        let hours = Math.floor(minutes / 60);
+        let hours = Math.floor(minutes / 60) % 24;
         const mins = minutes % 60;
         return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`; // Pad with leading zeros
     }
