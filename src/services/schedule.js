@@ -100,8 +100,8 @@ class ScheduleService {
 
     // Helper function to convert total minutes to time (HH:MM)
     minutesToTime(minutes) {
-        let hours = Math.floor(minutes / 60);  // Wrap hours around 24
-        // const hours = Math.floor(minutes / 60);
+        minutes = Math.floor(minutes);
+        let hours = Math.floor(minutes / 60);
         const mins = minutes % 60;
         return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`; // Pad with leading zeros
     }
