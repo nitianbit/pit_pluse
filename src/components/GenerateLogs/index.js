@@ -171,7 +171,6 @@ const onDriverChangeCallback=()=>{
         currentDriver={currentDriver}
         visible={changeDriverModal}
         toggleVisible={toggleChangeDriverModal}
-        onDriverChangeCallback={onDriverChangeCallback}
       />
 
     </>

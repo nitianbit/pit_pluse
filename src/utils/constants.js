@@ -79,6 +79,7 @@ export const FLAG_TYPE={
   REFUEL:'Refuel',
   DRIVER_CHANGE:'Driver Change',
   REFUEL_AND_DRIVER_CHANGE:'Refuel & Driver Change',
+  RACE_START:'Race Start'
 }
 
 export const getFlagTypeString=(flagType)=>{

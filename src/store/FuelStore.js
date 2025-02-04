@@ -24,6 +24,7 @@ class FuelStore {
         if (raceStore.data.fuelDuration) {
             runInAction(() => {
                 this.fuelStats.fuelDuration = raceStore.data.fuelDuration * 60; //as fuelDuration is in minutes
+                this.fuelStats.durationCovered = this.fuelStats.startTime ? moment().unix() - this.fuelStats.startTime : 0
             });
         }
         

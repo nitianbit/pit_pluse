@@ -96,6 +96,7 @@ class RaceStore {
             // this.raceStats.startTime = this.raceStats.startTime || currentTime; // Set if not already set
             this.raceStats.startTime = raceStartTime; // Set if not already set
             this.raceStats.duration = (this.data.duration ?? 0) * 60 * 60;//in seconds
+            this.raceStats.durationCovered = moment().unix() - this.raceStats.startTime//populate initial durationCovered
         })
 
         //schedule notification
