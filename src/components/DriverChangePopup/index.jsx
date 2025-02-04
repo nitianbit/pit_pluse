@@ -5,14 +5,14 @@ import ThemeText from '../ThemeText'
 import { observer } from 'mobx-react-lite'
 import raceStore from '../../store/RaceStore'
 import driverStore from '../../store/DriverStore'
-import { FLAG_TYPE } from '../../utils/constants'
+import { FLAG_TYPE, RACE_STATUS } from '../../utils/constants'
 import { showMessage } from 'react-native-flash-message'
 import useThemeColor from '../../hooks/useThemeColor'
 import { CheckIcon } from '../../assets/svgs'
 import fuelStore from '../../store/FuelStore'
 
 
-const DriverChangePopup = ({ visible, toggleVisible, currentDriver, flagKind = 2,onDriverChangeCallback=()=>{} }) => {
+const DriverChangePopup = ({ visible, toggleVisible, currentDriver, flagKind = 2 }) => {
     const theme = useThemeColor();
     const { data } = raceStore;
     const [driverSeleted, setDriverSelected] = React.useState(null);
@@ -46,8 +46,12 @@ const DriverChangePopup = ({ visible, toggleVisible, currentDriver, flagKind = 2
             } else {
                 //only driver change
                 driverStore.changeCurrentDriver(driverSeleted);
-                onDriverChangeCallback();//to start race
-                raceStore.generateLogs(FLAG_TYPE.DRIVER_CHANGE);
+                if (raceStore.raceStats.status === RACE_STATUS.NOT_STARTED) {
+                    raceStore.startRace(true);
+                    raceStore.generateLogs(FLAG_TYPE.RACE_START);
+                } else {
+                    raceStore.generateLogs(FLAG_TYPE.DRIVER_CHANGE);
+                }
             }
             showSuccessMsg();
             toggleVisible();
