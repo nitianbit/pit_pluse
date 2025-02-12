@@ -359,7 +359,7 @@ class RaceStore {
             console.log('remainingTime', remainingTime);
             //0 mins
             if (remainingTime > 0) {
-                NotificationService.scheduleNotification('Race Ended', 'Race Completed', moment().unix() + remainingTime);
+                NotificationService.scheduleNotification('Race Ended', 'Race Completed', moment().unix() + remainingTime,NOTIFICATION_TYPE.raceEnd);
             }
             //5 mins
             if (remainingTime > 5 * 60) {

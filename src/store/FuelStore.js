@@ -110,12 +110,18 @@ class FuelStore {
         this.saveFuelData(); // Save one last time before stopping
     }
 
-    refuel= () => {
+    refuel= async() => {
         this.stopFuelTimer()
         this.fuelStats.durationCovered = 0;
         this.fuelStats.startTime = moment().unix();
         this.saveFuelData();
         this.startFuelTimer();
+        //in case of refuel clear previous scheduled fuel notification and create new one
+
+        const elapsedTime = moment().unix() - (this.fuelStats.startTime??moment().unix());
+        const remainingTime = this.fuelStats.fuelDuration-elapsedTime;
+        await this.clearFuelNotifications();
+        this.createNotification(remainingTime);
     }
 
 
@@ -132,22 +138,38 @@ class FuelStore {
         try {
             //0 mins
             if (remainingTime > 0) {
-                NotificationService.scheduleNotification('Fuel Exhausted', 'Fuel Exhausted', moment().unix() + remainingTime);
+                NotificationService.scheduleNotification('Coasting mode: empty tank', 'Coasting mode: empty tank', moment().unix() + remainingTime,NOTIFICATION_TYPE.fuelEnd);
             }
             //5 mins
             if (remainingTime > 5 * 60) {
-                NotificationService.scheduleNotification('5 minutes before you learn the art of coasting!', '5 mins remaining for Fuel to endExhaust', moment().unix() + (remainingTime - 5 * 60), NOTIFICATION_TYPE.race5Min);
+                NotificationService.scheduleNotification('5 minutes before you learn the art of coasting!', '5 mins remaining for Fuel to endExhaust', moment().unix() + (remainingTime - 5 * 60), NOTIFICATION_TYPE.fuel5Min);
             }
             //10 mins
             if (remainingTime > 10 * 60) {
-                NotificationService.scheduleNotification('10 minutes before you learn the art of coasting!', '10 mins remaining for Fuel to Exhaust', moment().unix() + (remainingTime - 10 * 60), NOTIFICATION_TYPE.race10Min);
+                NotificationService.scheduleNotification('10 minutes before you learn the art of coasting!', '10 mins remaining for Fuel to Exhaust', moment().unix() + (remainingTime - 10 * 60), NOTIFICATION_TYPE.fuel10Min);
             }
             //15 mins
             if (remainingTime > 15 * 60) {
-                NotificationService.scheduleNotification('15 minutes before you learn the art of coasting!', '15 mins remaining for Fuel to Exhaust', moment().unix() + (remainingTime - 15 * 60), NOTIFICATION_TYPE.race15Min);
+                NotificationService.scheduleNotification('15 minutes before you learn the art of coasting!', '15 mins remaining for Fuel to Exhaust', moment().unix() + (remainingTime - 15 * 60), NOTIFICATION_TYPE.fuel15Min);
             }
         } catch (error) {
 
+        }
+    }
+
+    clearFuelNotifications = async () => {
+        try {
+            const notifications = [NOTIFICATION_TYPE.fuelEnd, NOTIFICATION_TYPE.fuel5Min, NOTIFICATION_TYPE.fuel10Min, NOTIFICATION_TYPE.fuel15Min];
+            const promises = notifications.map(async (type) => {
+                const prevNotificationId = await NotificationService.getNotificationIdFromLocalStorage(type);
+                if (prevNotificationId) {
+                    await storageService.removeKey(type);
+                    NotificationService.cancelNotification(prevNotificationId);
+                }
+            })
+            const response = await Promise.allSettled(promises);
+        } catch (error) {
+            console.log("error clearing fuel notifications",error)
         }
     }
 }
