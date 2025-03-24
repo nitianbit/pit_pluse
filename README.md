@@ -80,3 +80,6 @@ To learn more about React Native, take a look at the following resources:
 
 
 ### use themeservice data everywhere
+
+
+## keytool -genkey -v -keystore release.keystore -alias pitpulse -keyalg RSA -keysize 2048 -validity 10000
