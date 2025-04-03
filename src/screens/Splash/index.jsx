@@ -29,7 +29,7 @@ const Splash = () => {
               console.log("load end")
               setTimeout(() => {
                   navigation.navigate(NavName.HOME)
-                }, 2500);
+                }, Platform.OS === 'ios' ? 1000 : 2500);
                 
             }}
           />
